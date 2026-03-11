@@ -12,9 +12,17 @@ var city_comp: CityComponent
 
 var elements_map : TileMapLayer 
 
+var workshop_origin : Vector2i = Vector2i(0,4)
+var workshop_form : Array[Vector2i] = [
+	Vector2i(0,0), Vector2i(1,0), Vector2i(2,0), Vector2i(3,0),
+	Vector2i(0,1), Vector2i(1,1), Vector2i(2,1), Vector2i(3,1),
+	Vector2i(0,2), Vector2i(1,2), Vector2i(2,2), Vector2i(3,2)	
+]
+
 enum jobs {
 	IDLE,
-	GATHER
+	GATHER,
+	BUILD
 }
 
 var current_job : jobs = jobs.IDLE
@@ -34,6 +42,8 @@ func _process(delta: float) -> void:
 			pass
 		jobs.GATHER:
 			get_wood(delta)
+		jobs.BUILD:
+			build(delta)
 		
 
 func move_to_target(delta: float) -> void:
@@ -99,7 +109,43 @@ func get_wood_tiles() -> Array[Vector2i] :
 	return wood_tiles
 
 func check_job() -> void:
+
+	# prioridad 1: build
+	if check_build_orders():
+		return
+
+	# prioridad 2: gather
 	if city_comp.tasks["gather_resources"]:
 		current_job = jobs.GATHER
-	else:
-		current_job = jobs.IDLE
+		return
+
+	# fallback
+	current_job = jobs.IDLE
+
+func check_build_orders() -> bool:
+	if current_job == jobs.BUILD:
+		return false
+	for build_order_pos in city_comp.build_orders.keys():
+
+		if city_comp.build_orders.get(build_order_pos) == "workplace":
+			print("nono")
+			target_pos = build_order_pos
+			city_comp.build_orders[build_order_pos] = "reserved"
+			current_job = jobs.BUILD
+			return true
+
+	return false
+
+func build(delta: float) -> void:
+	move_to_target(delta)
+	if grid_pos==target_pos:
+		print("buildingbip")
+
+
+func build_workplace() -> void:
+	var mouse_world = elements_map.get_global_mouse_position()
+	var base_cell = elements_map.local_to_map(elements_map.to_local(mouse_world))
+	for offset in workshop_form:
+		var target_cell = base_cell + offset
+		var atlas_coords = workshop_origin + offset
+		elements_map.set_cell(target_cell, 0, atlas_coords)

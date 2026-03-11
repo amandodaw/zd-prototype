@@ -13,6 +13,7 @@ var city_comp : CityComponent
 func _ready() -> void:
 	city_comp = CityComponent.new()
 	ui.city_comp = city_comp
+	ui.elements_map = elements_map
 	for i in range(2+1):
 			 
 		spawn_human(Vector2(i*GridUtils.TILE_SIZE, i*GridUtils.TILE_SIZE))
