@@ -27,7 +27,7 @@ func _process(delta: float) -> void:
 			var mouse_world = elements_map.get_global_mouse_position()
 			var base_cell = elements_map.local_to_map(elements_map.to_local(mouse_world))
 			elements_map.set_cell(base_cell, 0, build_order)
-			city_comp.build_orders.set(base_cell, "workplace")
+			city_comp.build_orders.set(base_cell, "workplace_order")
 			build_mode = false
 
 func update_resources(amount):
