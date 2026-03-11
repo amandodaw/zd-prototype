@@ -1,10 +1,9 @@
 [gd_scene format=3 uid="uid://cmiptwkh5v7il"]
 
+[ext_resource type="Script" uid="uid://caspwgjsuu14d" path="res://scripts/world.gd" id="1_4wyf3"]
 [ext_resource type="PackedScene" uid="uid://cq5aeyp6b0aqa" path="res://scenes/map.tscn" id="1_nnsk1"]
-[ext_resource type="PackedScene" uid="uid://d0taproh1hhtm" path="res://scenes/human.tscn" id="2_rwgxs"]
 
 [node name="World" type="Node2D" unique_id=538437442]
+script = ExtResource("1_4wyf3")
 
 [node name="Map" parent="." unique_id=1369909102 instance=ExtResource("1_nnsk1")]
-
-[node name="Human" parent="." unique_id=1027604701 instance=ExtResource("2_rwgxs")]

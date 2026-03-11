@@ -4,8 +4,6 @@
 [ext_resource type="Script" uid="uid://y7g7bjx7ejd7" path="res://scripts/human.gd" id="2_cwf78"]
 
 [node name="Human" type="Sprite2D" unique_id=1027604701]
-position = Vector2(7, 7)
 texture = ExtResource("1_swaxu")
+centered = false
 script = ExtResource("2_cwf78")
-
-[node name="Camera2D" type="Camera2D" parent="." unique_id=1788370088]

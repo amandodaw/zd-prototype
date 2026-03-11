@@ -146,3 +146,6 @@ script = ExtResource("1_paxxb")
 
 [node name="GroundLayer" type="TileMapLayer" parent="." unique_id=294786051]
 tile_set = SubResource("TileSet_hrmi8")
+
+[node name="ElementsLayer" type="TileMapLayer" parent="." unique_id=777989675]
+tile_set = SubResource("TileSet_hrmi8")

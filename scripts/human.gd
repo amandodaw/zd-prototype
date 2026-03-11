@@ -5,10 +5,12 @@ var grid_pos : Vector2i = Vector2i.ZERO
 
 var speed : int = 100
 
+var current_job : String 
+
 
 func move_to(dir : GridUtils.direction) -> void:
 	grid_pos += GridUtils.DIR[dir]
-	position = grid_pos * GridUtils.TILE_SIZE + GridUtils.grid_offset
+	position = grid_pos * GridUtils.TILE_SIZE
 
 func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("ui_accept"):
