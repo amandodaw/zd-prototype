@@ -1,5 +1,7 @@
 extends Sprite2D
 
+@onready var build_bar : ProgressBar = $ProgressBar
+
 const INVALID := Vector2i(-1,-1)
 
 var grid_pos : Vector2i = Vector2i.ZERO
@@ -12,8 +14,10 @@ var visible_tiles : Dictionary
 var city_comp : CityComponent
 var elements_map : TileMapLayer
 
+var workplace_cost : int = 9
+var workplace_build_progress : float = 0.0
+var workplace_build_needed : float = 10.0
 var workplace_origin : Vector2i = Vector2i(0,4)
-
 var workplace_form : Array[Vector2i] = [
 	Vector2i(0,0), Vector2i(1,0), Vector2i(2,0), Vector2i(3,0),
 	Vector2i(0,1), Vector2i(1,1), Vector2i(2,1), Vector2i(3,1),
@@ -67,10 +71,14 @@ func try_take_build_order() -> bool:
 	for pos in city_comp.build_orders.keys():
 
 		if city_comp.build_orders[pos] == "workplace_order":
+			if city_comp.wood_amount < workplace_cost:
+				print("not enough wood")
+				return false
 			release_target()
 			target_pos = pos
 			build_order = pos
 			city_comp.build_orders[pos] = "reserved"
+			city_comp.wood_amount -= workplace_cost
 			return true
 
 	return false
@@ -111,12 +119,18 @@ func gather(delta):
 func build(delta):
 
 	if grid_pos == target_pos:
-		place_workplace()
-		city_comp.build_orders.set(target_pos, "workplace")
-		release_target()
-		target_pos = INVALID
-		build_order = INVALID
-		return
+		build_bar.visible = true
+		build_bar.value = workplace_build_progress*10
+		if workplace_build_progress>=workplace_build_needed:
+			workplace_build_progress = 0
+			place_workplace()
+			city_comp.build_orders.set(target_pos, "workplace")
+			release_target()
+			target_pos = INVALID
+			build_order = INVALID
+			build_bar.visible = false
+			return
+		workplace_build_progress += delta
 
 	move_to_target(delta)
 
@@ -191,4 +205,6 @@ func release_target():
 	if target_pos != INVALID:
 		if visible_tiles.get(target_pos) == "reserved":
 			visible_tiles[target_pos] = state
+			if current_job == Jobs.BUILD:
+				city_comp.wood_amount -= workplace_cost
 	target_pos = INVALID

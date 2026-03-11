@@ -7,3 +7,9 @@
 texture = ExtResource("1_swaxu")
 centered = false
 script = ExtResource("2_cwf78")
+
+[node name="ProgressBar" type="ProgressBar" parent="." unique_id=2023321212]
+visible = false
+offset_left = -8.0
+offset_top = -27.0
+offset_right = 24.0
