@@ -1,0 +1,52 @@
+[gd_scene format=3 uid="uid://byfc5b3nbdcdi"]
+
+[ext_resource type="Script" uid="uid://cjg5im43trbcx" path="res://scripts/ui.gd" id="1_c4rma"]
+
+[node name="CanvasLayer" type="CanvasLayer" unique_id=822684192]
+
+[node name="UI" type="Control" parent="." unique_id=2056898663]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_c4rma")
+
+[node name="TopBar" type="Control" parent="UI" unique_id=1356443333]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Resources" type="Panel" parent="UI/TopBar" unique_id=1666689437]
+layout_mode = 0
+offset_right = 40.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/TopBar/Resources" unique_id=261627760]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="WoodLabel" type="Label" parent="UI/TopBar/Resources/HBoxContainer" unique_id=694697161]
+layout_mode = 2
+text = "Wood: 0"
+
+[node name="BottomPanel" type="Control" parent="UI" unique_id=3979500]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Orders" type="Panel" parent="UI/BottomPanel" unique_id=1988973692]
+layout_mode = 0
+offset_right = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/BottomPanel/Orders" unique_id=1407982732]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 38.0
+offset_right = 43.0
+offset_bottom = 78.0
+
+[node name="GatherButton" type="Button" parent="UI/BottomPanel/Orders/VBoxContainer" unique_id=541604631]
+layout_mode = 2
+text = "Gather resources: 0"
+
+[connection signal="pressed" from="UI/BottomPanel/Orders/VBoxContainer/GatherButton" to="UI" method="_on_gather_button_pressed"]

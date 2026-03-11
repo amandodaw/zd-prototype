@@ -5,11 +5,14 @@ var human_scene = preload("res://scenes/human.tscn")
 
 @onready var map : Node2D = $Map
 @onready var elements_map : TileMapLayer = $Map/ElementsLayer
+@onready var ui : Control = $CanvasLayer/UI
 
-var city_component : CityComponent
+
+var city_comp : CityComponent
 
 func _ready() -> void:
-	city_component = CityComponent.new()
+	city_comp = CityComponent.new()
+	ui.city_comp = city_comp     
 	spawn_human(Vector2.ZERO)
 
 func spawn_human(pos: Vector2) -> void:
