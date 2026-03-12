@@ -254,9 +254,7 @@ func finish_build():
 # ------------------------------------------------
 
 func make(delta):
-	print(grid_pos, target_pos)
 	if grid_pos == target_pos:
-		print("llego aqui si")
 		build_bar.visible = true
 		build_bar.value = make_axe_progress*10
 		if make_axe_progress>=make_axe_needed:
