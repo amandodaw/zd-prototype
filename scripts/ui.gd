@@ -1,8 +1,10 @@
 extends Control
 
 @onready var wood_label : Label = $TopBar/Resources/HBoxContainer/WoodLabel
+@onready var axe_label : Label = $TopBar/Resources/HBoxContainer/AxeLabel
 
 @onready var gather_button : Button = $BottomPanel/Orders/VBoxContainer/GatherButton
+@onready var make_axe_button : Button = $BottomPanel/Orders/VBoxContainer/MakeAxe
 
 var city_comp : CityComponent
 
@@ -20,7 +22,7 @@ func _process(delta: float) -> void:
 	cont += delta
 	if cont>=1:
 		cont=0
-		update_resources(city_comp.wood_amount)
+		update_resources()
 	if Input.is_action_just_pressed("mouse_left"):
 
 		if build_mode:
@@ -30,8 +32,9 @@ func _process(delta: float) -> void:
 			city_comp.build_orders.set(base_cell, "workplace_order")
 			build_mode = false
 
-func update_resources(amount):
-	wood_label.text = "Wood: " + str(amount)
+func update_resources():
+	wood_label.text = "Wood: " + str(city_comp.wood_amount)
+	axe_label.text = "Axes: " + str(city_comp.axe_amount)
 
 
 func _on_gather_button_pressed() -> void:
@@ -43,3 +46,8 @@ func _on_build_workshop_pressed() -> void:
 	build_mode = true
 	print("build mode activated")
 	
+
+
+func _on_make_sword_pressed() -> void:
+	city_comp.tasks["make_axe"] = !city_comp.tasks["make_axe"]
+	make_axe_button.text = "Make axe: " + str(city_comp.tasks["make_axe"])

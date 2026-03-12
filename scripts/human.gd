@@ -27,7 +27,8 @@ var workplace_form : Array[Vector2i] = [
 enum Jobs {
 	IDLE,
 	GATHER,
-	BUILD
+	BUILD,
+	MAKE_AXE
 }
 
 var current_job : Jobs = Jobs.IDLE
@@ -59,6 +60,9 @@ func update_job():
 
 	if city_comp.tasks["gather_resources"]:
 		current_job = Jobs.GATHER
+		return
+	if city_comp.tasks["make_axe"]:
+		current_job = Jobs.MAKE_AXE
 		return
 	release_target()
 	current_job = Jobs.IDLE
@@ -139,6 +143,12 @@ func place_workplace() -> void:
 		var target_cell = build_order + offset
 		var atlas_coords = workplace_origin + offset
 		elements_map.set_cell(target_cell, 0, atlas_coords)
+
+# ------------------------------------------------
+# MAKE
+# ------------------------------------------------
+func make_sword() -> void:
+	pass
 # ------------------------------------------------
 # MOVEMENT
 # ------------------------------------------------
