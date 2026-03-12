@@ -8,6 +8,7 @@ var grid_pos : Vector2i = Vector2i.ZERO
 var target_pos : Vector2i = INVALID
 
 var build_order : Vector2i = INVALID
+var build_type : String = ""
 var make_order : int = -1
 
 var speed := 0.1
@@ -31,6 +32,17 @@ var workplace_form : Array[Vector2i] = [
 var make_axe_cost : int = 5
 var make_axe_progress : float = 0.0
 var make_axe_needed : float = 10.0
+
+var wall_cost : int = 5
+var wall_progress : float = 0.0
+var wall_needed : float = 10.0
+
+var wall_origin : Vector2i = Vector2i(9, 3)
+#var wall_form : Array[Vector2i] = [
+	#Vector2i(0,0), Vector2i(1,0), Vector2i(2,0), Vector2i(3,0),
+	#Vector2i(0,1), Vector2i(1,1), Vector2i(2,1), Vector2i(3,1),
+	#Vector2i(0,2), Vector2i(1,2), Vector2i(2,2), Vector2i(3,2)	
+#]
 
 enum Jobs {
 	IDLE,
@@ -97,8 +109,21 @@ func try_take_build_order() -> bool:
 			release_target()
 			target_pos = pos
 			build_order = pos
+			build_type = "workplace"
 			city_comp.build_orders[pos] = "reserved"
 			city_comp.wood_amount -= workplace_cost
+			return true
+
+		if city_comp.build_orders[pos] == "wall_order":
+			if city_comp.wood_amount < wall_cost:
+				print("not enough wood")
+				return false
+			release_target()
+			target_pos = pos
+			build_order = pos
+			build_type = "wall"
+			city_comp.build_orders[pos] = "reserved"
+			city_comp.wood_amount -= wall_cost
 			return true
 
 	return false
@@ -163,20 +188,37 @@ func gather(delta):
 func build(delta):
 
 	if grid_pos == target_pos:
+
 		build_bar.visible = true
-		build_bar.value = workplace_build_progress*10
-		if workplace_build_progress>=workplace_build_needed:
-			workplace_build_progress = 0
-			place_workplace()
-			city_comp.build_orders.set(target_pos, "workplace")
-			release_target()
-			target_pos = INVALID
-			build_order = INVALID
-			build_bar.visible = false
-			reset_jobs()
+
+		if build_type == "workplace":
+
+			build_bar.value = workplace_build_progress * 10
+
+			if workplace_build_progress >= workplace_build_needed:
+				workplace_build_progress = 0
+				place_workplace()
+				city_comp.build_orders[target_pos] = "workplace"
+				finish_build()
+				return
+
+			workplace_build_progress += delta
 			return
-		workplace_build_progress += delta
-		return
+
+
+		if build_type == "wall":
+
+			build_bar.value = wall_progress * 10
+
+			if wall_progress >= wall_needed:
+				wall_progress = 0
+				place_wall()
+				city_comp.build_orders[target_pos] = "wall"
+				finish_build()
+				return
+
+			wall_progress += delta
+			return
 
 	move_to_target(delta)
 
@@ -188,7 +230,24 @@ func place_workplace() -> void:
 			#poner donde van los humanos a crear cosas. donde "ven el workshop"
 			visible_tiles.set(target_cell, "workplace")
 		elements_map.set_cell(target_cell, 0, atlas_coords)
+
+func place_wall() -> void:
+
+	var target_cell = build_order
+	var atlas_coords = wall_origin
+
+	visible_tiles.set(target_cell, "wall")
+	elements_map.set_cell(target_cell, 0, atlas_coords)
 		
+
+func finish_build():
+
+	release_target()
+	target_pos = INVALID
+	build_order = INVALID
+	build_type = ""
+	build_bar.visible = false
+	reset_jobs()
 
 # ------------------------------------------------
 # MAKE

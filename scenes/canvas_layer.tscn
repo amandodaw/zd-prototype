@@ -61,6 +61,11 @@ text = "Make sword: 0"
 layout_mode = 2
 text = "Build Workshop"
 
+[node name="BuildWall" type="Button" parent="UI/BottomPanel/Orders/VBoxContainer" unique_id=1917025807]
+layout_mode = 2
+text = "Build Workshop"
+
 [connection signal="pressed" from="UI/BottomPanel/Orders/VBoxContainer/GatherButton" to="UI" method="_on_gather_button_pressed"]
 [connection signal="pressed" from="UI/BottomPanel/Orders/VBoxContainer/MakeAxe" to="UI" method="_on_make_sword_pressed"]
 [connection signal="pressed" from="UI/BottomPanel/Orders/VBoxContainer/BuildWorkshop" to="UI" method="_on_build_workshop_pressed"]
+[connection signal="pressed" from="UI/BottomPanel/Orders/VBoxContainer/BuildWall" to="UI" method="_on_build_wall_pressed"]
