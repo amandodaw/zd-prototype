@@ -6,7 +6,10 @@ const INVALID := Vector2i(-1,-1)
 
 var grid_pos : Vector2i = Vector2i.ZERO
 var target_pos : Vector2i = INVALID
+
 var build_order : Vector2i = INVALID
+var make_order : int
+
 var speed := 0.1
 var speed_cont := 0.0
 
@@ -17,12 +20,17 @@ var elements_map : TileMapLayer
 var workplace_cost : int = 9
 var workplace_build_progress : float = 0.0
 var workplace_build_needed : float = 10.0
+
 var workplace_origin : Vector2i = Vector2i(0,4)
 var workplace_form : Array[Vector2i] = [
 	Vector2i(0,0), Vector2i(1,0), Vector2i(2,0), Vector2i(3,0),
 	Vector2i(0,1), Vector2i(1,1), Vector2i(2,1), Vector2i(3,1),
 	Vector2i(0,2), Vector2i(1,2), Vector2i(2,2), Vector2i(3,2)	
 ]
+
+var make_axe_cost : int = 5
+var make_axe_progress : float = 0.0
+var make_axe_needed : float = 10.0
 
 enum Jobs {
 	IDLE,
@@ -57,13 +65,15 @@ func update_job():
 	if try_take_build_order():
 		current_job = Jobs.BUILD
 		return
+		
+	if try_take_make_order():
+		current_job = Jobs.MAKE_AXE
+		return
 
 	if city_comp.tasks["gather_resources"]:
 		current_job = Jobs.GATHER
 		return
-	if city_comp.tasks["make_axe"]:
-		current_job = Jobs.MAKE_AXE
-		return
+
 	release_target()
 	current_job = Jobs.IDLE
 
@@ -83,6 +93,24 @@ func try_take_build_order() -> bool:
 			build_order = pos
 			city_comp.build_orders[pos] = "reserved"
 			city_comp.wood_amount -= workplace_cost
+			return true
+
+	return false
+
+func try_take_make_order() -> bool:
+	if city_comp.make_orders.is_empty():
+		return false
+	for i in range(city_comp.make_orders.size()):
+		var make_job = city_comp.make_orders[i]
+		if make_job == "make_axe":
+			if city_comp.wood_amount < make_axe_cost:
+				print("not enough wood")
+				return false
+			release_target()
+			target_pos = find_nearest("workplace")
+			make_order = i
+			city_comp.make_orders[i] = "reserved"
+			city_comp.wood_amount -= make_axe_cost
 			return true
 
 	return false
@@ -147,8 +175,25 @@ func place_workplace() -> void:
 # ------------------------------------------------
 # MAKE
 # ------------------------------------------------
-func make_sword() -> void:
-	pass
+
+func make(delta):
+
+	if grid_pos == target_pos:
+		build_bar.visible = true
+		build_bar.value = workplace_build_progress*10
+		if make_axe_progress>=make_axe_needed:
+			make_axe_progress = 0
+			city_comp.axe_amount += 1
+			city_comp.make_orders.pop_at(make_order)
+			release_target()
+			target_pos = INVALID
+			build_order = INVALID
+			build_bar.visible = false
+			return
+		make_axe_progress += delta
+
+	move_to_target(delta)
+
 # ------------------------------------------------
 # MOVEMENT
 # ------------------------------------------------
