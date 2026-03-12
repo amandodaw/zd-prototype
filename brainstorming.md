@@ -1,8 +1,10 @@
- # Concepto
+ # Brainstorming inicial
+
+ ## Concepto
 
  El jugador da órdenes a humanos npc con el fin de sobrevivir a un ataque de zombies cada noche. Entre las acciones disponibles, se encuentran recolectar recursos, construir edificios (por orden del jugador), fabricar armas/herramientas, equipar/inventario de armas y herramientas, combatircon las distintas armas (ataque melee, a distancia, defender).
 
- # Elementos necesarios en Godot
+ ## Elementos necesarios en Godot
 
 - UI con los valores de las ordenes y las teclas que hace falta para pulsarlas y activarlas y desactivarlas. También un menú para seleccionar un humano y darle ordenes individuales (equipar objeto, asignar desasignar trabajos)
 - Tilemaplayer con suelo y mapa jugable
@@ -61,3 +63,54 @@
 - pared
 - zombies
 - dia/noche
+
+ # Progreso día 1
+
+- Creado Node2d map con 2 TileMapLayer: groundlayer y entitieslayer. Entitieslayer se referencia en los scripts de los humanos
+- Creada UI basica con botones que activan acciones y labels que muestran cuantas cosas hay en la ciudad
+- Creado Sprite2d Player con node progressbar. Script más complicado con todo el comportamiento de player. Dividir en sistemas post-prototypo. Mantener ordenado KISS KISS KISS
+- Creado city_component.gd que guarda las variables de la ciudad. Build_orders, edificios, cantidad madera y hachas
+- Copiado script camara de ZombieDefenseManager
+- Creado comportamiento de estados básico del humano. Sistemas resumidos todos dentro de su script. En jobsystem, checkea que trabajo hacer, y en process, ejecuta acciones según su estado (classic state machine)
+- Creado metodo para buscar en la array de entidades y encontrar el objetivo más cercano.
+- Creados trabajos gather y build.
+- En proceso de creación de trabajo make_axe
+
+ # Próximas tareas desmenuzadas 12-03-26
+
+**Make_axe**: Crear método make_axe similar a build(), pero esta vez no crea un edificio, si no que aumenta la cantidad de axe_amount de la ciudad.
+**Make_bow**: ¿Realmente hace falta para prototipar? Vamos a dejarlo por ahora.
+**Build_wall**: Que gaste unos 3 de madera, tenga unos 10 de hp. Problema, donde guardar el hp? Quizás llego la hora de crear un build_component simple.
+**Melee_attack**: Si hay espadas en la ciudad, coger una y usarla para atacar al zombie más cercano. ¿Hacer zombies primero?
+**Zombies**: Con rango de visión. O sin el. Si hay humano a 3 casillas, ir a por el, si no, ir a por pared o edificio. Añadir vida a edificio.
+**Ciclo_día_noche**: Un script que según delta va cambiando el día y la noche (variable de citycomponent de momento). El día dura unos 60 segundos y la noche 30, para mantener el ritmo rápido de juego. Por la noche spawnean zombies cerca de las construcciones y hay que defenderlos. Cada día +1 humano, cada noche +1 o 2 zombies.
+**Sistema de combate**: Ahora si, con los elementos necesarios, que se peguen.
+**Disfrutar del gameplay**: Prototypo en teoría jugable! Llegado este punto, disfrutar. Maravillarse con el gameplay. Si es divertido, refactorizar código para añadir contenido (aún sin optimización masiva de código)
+
+ ## Make_axe
+
+- [x] Crear botón make_axe
+    - [x] Crear variable axe_amount en city_comp
+    - [x] Crear variable en diccionario tasks "make_axe"
+    - [x] Botón activa y desactiva la órden
+- [] Crear acción make_axe en human.gd
+    - [] Añadir estado make_axe al enum Jobs
+    - [] Si city_comp.tasks["make_axe"] == true -> current_job make_axe
+    - [] Comprobar que get_target de get_wood_tiles se puede usar para los workplaces para elegir objetivo workplace
+    - [] make_axe(): si target distinto de INVALID, get_target. Si posicion != posicion target. Si esta en el target, que aumente el progreso. Si termina, aumenta axe_amount de city_comp.
+
+ ## Build_wall
+
+- [] Crear botón build_wall
+    - [] Crear build_order en array build_orders de city_comp
+    - [] Añadir datos de wall en human.gd (al final los sistemas están aquí dentro resumidos)
+    - No debería hacer falta mucho más, ya que debería estar hecho lo demás de build_workplace
+- [] Crear método build_workplace o modificar build() para que cree una cosa o otra según el valor del diccionario build_orders -> workplace_order o wall_order
+
+ ## Zombies
+
+ ## Melee_attack/Combat_system(en human.gd)
+ 
+ ## Ciclo día/Noche (en city_comp)
+
+ ## DISFRUTAR DEL GAMEPLAY
