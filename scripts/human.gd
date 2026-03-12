@@ -8,7 +8,7 @@ var grid_pos : Vector2i = Vector2i.ZERO
 var target_pos : Vector2i = INVALID
 
 var build_order : Vector2i = INVALID
-var make_order : int
+var make_order : int = -1
 
 var speed := 0.1
 var speed_cont := 0.0
@@ -51,6 +51,9 @@ func _process(delta):
 
 		Jobs.BUILD:
 			build(delta)
+		
+		Jobs.MAKE_AXE:
+			make(delta)
 
 
 # ------------------------------------------------
@@ -60,6 +63,9 @@ func _process(delta):
 func update_job():
 
 	if build_order != INVALID:
+		return
+	
+	if current_job != Jobs.IDLE:
 		return
 
 	if try_take_build_order():
@@ -100,6 +106,9 @@ func try_take_build_order() -> bool:
 func try_take_make_order() -> bool:
 	if city_comp.make_orders.is_empty():
 		return false
+	var workplace_pos = find_nearest("workplace")
+	if workplace_pos==INVALID:
+		return false
 	for i in range(city_comp.make_orders.size()):
 		var make_job = city_comp.make_orders[i]
 		if make_job == "make_axe":
@@ -115,6 +124,8 @@ func try_take_make_order() -> bool:
 
 	return false
 
+func reset_jobs() ->void:
+	current_job = Jobs.IDLE
 
 # ------------------------------------------------
 # GATHER
@@ -137,7 +148,8 @@ func gather(delta):
 		city_comp.wood_amount += 5
 		visible_tiles.erase(target_pos)
 		elements_map.erase_cell(target_pos)
-
+		
+		reset_jobs()
 		target_pos = INVALID
 		return
 
@@ -161,8 +173,10 @@ func build(delta):
 			target_pos = INVALID
 			build_order = INVALID
 			build_bar.visible = false
+			reset_jobs()
 			return
 		workplace_build_progress += delta
+		return
 
 	move_to_target(delta)
 
@@ -170,17 +184,22 @@ func place_workplace() -> void:
 	for offset in workplace_form:
 		var target_cell = build_order + offset
 		var atlas_coords = workplace_origin + offset
+		if offset == Vector2i(1, 1):
+			#poner donde van los humanos a crear cosas. donde "ven el workshop"
+			visible_tiles.set(target_cell, "workplace")
 		elements_map.set_cell(target_cell, 0, atlas_coords)
+		
 
 # ------------------------------------------------
 # MAKE
 # ------------------------------------------------
 
 func make(delta):
-
+	print(grid_pos, target_pos)
 	if grid_pos == target_pos:
+		print("llego aqui si")
 		build_bar.visible = true
-		build_bar.value = workplace_build_progress*10
+		build_bar.value = make_axe_progress*10
 		if make_axe_progress>=make_axe_needed:
 			make_axe_progress = 0
 			city_comp.axe_amount += 1
@@ -189,8 +208,11 @@ func make(delta):
 			target_pos = INVALID
 			build_order = INVALID
 			build_bar.visible = false
+			make_order = -1
+			reset_jobs()
 			return
 		make_axe_progress += delta
+		return
 
 	move_to_target(delta)
 
