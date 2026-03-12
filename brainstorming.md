@@ -1,8 +1,10 @@
- # Concepto
+ # Brainstorming inicial
+
+ ## Concepto
 
  El jugador da órdenes a humanos npc con el fin de sobrevivir a un ataque de zombies cada noche. Entre las acciones disponibles, se encuentran recolectar recursos, construir edificios (por orden del jugador), fabricar armas/herramientas, equipar/inventario de armas y herramientas, combatircon las distintas armas (ataque melee, a distancia, defender).
 
- # Elementos necesarios en Godot
+ ## Elementos necesarios en Godot
 
 - UI con los valores de las ordenes y las teclas que hace falta para pulsarlas y activarlas y desactivarlas. También un menú para seleccionar un humano y darle ordenes individuales (equipar objeto, asignar desasignar trabajos)
 - Tilemaplayer con suelo y mapa jugable
@@ -74,7 +76,7 @@
 - Creados trabajos gather y build.
 - En proceso de creación de trabajo make_axe
 
- # Próximas tareas desmenuzadas
+ # Próximas tareas desmenuzadas 12-03-26
 
 **Make_axe**: Crear método make_axe similar a build(), pero esta vez no crea un edificio, si no que aumenta la cantidad de axe_amount de la ciudad.
 **Make_bow**: ¿Realmente hace falta para prototipar? Vamos a dejarlo por ahora.
