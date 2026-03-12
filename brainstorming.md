@@ -137,7 +137,7 @@
   - [x] Crear variable en diccionario tasks "make_axe"
   - [x] Botón activa y desactiva la órden
 
-- [ ] Crear acción make_axe en human.gd
+- [x] Crear acción make_axe en human.gd
   
   - [ ] ~~Añadir estado make_axe al enum Jobs~~
   
@@ -155,7 +155,7 @@
   
   - [x] crear try_to_take_make_order, asigna un workplace como target_pos
   
-  - [ ] crear make() que va al target_pos, y cuando esta hace como build con un progress bar y añade +1 a city_comp.axe_amount
+  - [x] crear make() que va al target_pos, y cuando esta hace como build con un progress bar y añade +1 a city_comp.axe_amount
   
   ## Build_wall
 

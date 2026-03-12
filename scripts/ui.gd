@@ -50,4 +50,4 @@ func _on_build_workshop_pressed() -> void:
 
 func _on_make_sword_pressed() -> void:
 	city_comp.make_orders.append("make_axe")
-	make_axe_button.text = "Make axe: " + str(city_comp.axe_amount)
+	make_axe_button.text = "Make axe: " + str(city_comp.make_orders.size())
