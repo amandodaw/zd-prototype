@@ -11,10 +11,12 @@ var wood_tile : Vector2i = Vector2i(10, 8)
 const height : int = 52
 const width : int = 72
 
+func _process(delta: float) -> void:
+	check_wood()
 
 func init_map() -> void:
 	create_soil()
-	add_wood(20)
+	add_wood(30)
 
 func create_soil() -> void:
 	for i in range(width):
@@ -35,3 +37,8 @@ func add_wood(amount: int) -> void:
 
 		element_layer.set_cell(pos, 0, wood_tile)
 		city_comp.entities[pos] = "wood"
+
+func check_wood() -> void:
+	if city_comp.entities.find_key("wood")==null and city_comp.entities.find_key("reserved") == null:
+		add_wood(10)
+		

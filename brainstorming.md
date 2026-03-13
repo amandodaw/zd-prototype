@@ -171,21 +171,33 @@
   
   ## Move_update
   
-  - [x]  Modificar move_to para que si el tile está ocupado, no se mueva
+  - [x] Modificar move_to para que si el tile está ocupado, no se mueva
   
   - [x]  Crear método para elegir un tile adyacente
   
-  - [ ]  Cambiar acciones para que se hagan desde el tile adyacente
+  - [x]  Cambiar acciones para que se hagan desde el tile adyacente
+  
+  - [x]  Eligen direccion aleatoria si esta ocupada el destino
+  
+  - [x] Humanos pertenecen a city_comp entities y visible_tiles eliminado por city_comp entities
   
   ## Zombies
   
-  - [ ] Mejorar movimiento de human para que evite tiles en visible_tiles. Después copiar la lógica en zombies.
+  - [ ] ~~Mejorar movimiento de human para que evite tiles en visible_tiles. Después copiar la lógica en zombies.~~
   
-  - [ ] Para ello, añadir comprobación de visible tiles antes de moverse a un tile
+  - [x] Para ello, añadir comprobación de visible tiles antes de moverse a un tile
   
-  - [ ] Crear sprite2d zombie sin progress bar, con un par de metodos de human find_nearest y go_to target
+  - [ ] ~~Crear sprite2d zombie sin progress bar, con un par de metodos de human find_nearest y go_to target~~
   
-  - [ ] 
+  - [x] Creado script entity.gd con metodos de movimiento y search de human para que herede zombie tambien
+  
+  - [ ] Añadir humanos a un array para que los zombies lo vean
+  
+  - [ ] Crear metodo para moverse a una pared
+  
+  - [ ] Si no ve humano en 3 tiles cercanas, moverse a pared. Si lo ve, cambiar a por humano
+  
+  
   
   ## Melee_attack/Combat_system(en human.gd)
   

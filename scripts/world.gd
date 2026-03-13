@@ -16,7 +16,7 @@ func _ready() -> void:
 	ui.elements_map = elements_map
 	map.city_comp = city_comp
 	map.init_map()
-	for i in range(2+1):
+	for i in range(10+1):
 			 
 		spawn_human(Vector2(i*GridUtils.TILE_SIZE, i*GridUtils.TILE_SIZE))
 
