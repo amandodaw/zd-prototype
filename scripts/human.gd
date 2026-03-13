@@ -163,12 +163,13 @@ func gather(delta):
 		var wood = find_nearest("wood")
 
 		if wood == INVALID:
+			reset_jobs()
 			return
 
 		target_pos = wood
 		visible_tiles[target_pos] = "reserved"
 
-	if grid_pos == target_pos:
+	if is_adjacent(grid_pos, target_pos):
 
 		city_comp.wood_amount += 5
 		visible_tiles.erase(target_pos)
@@ -187,7 +188,7 @@ func gather(delta):
 
 func build(delta):
 
-	if grid_pos == target_pos:
+	if is_adjacent(grid_pos, target_pos):
 
 		build_bar.visible = true
 
@@ -226,7 +227,7 @@ func place_workplace() -> void:
 	for offset in workplace_form:
 		var target_cell = build_order + offset
 		var atlas_coords = workplace_origin + offset
-		if offset == Vector2i(1, 1):
+		if offset == Vector2i(2, 2):
 			#poner donde van los humanos a crear cosas. donde "ven el workshop"
 			visible_tiles.set(target_cell, "workplace")
 		elements_map.set_cell(target_cell, 0, atlas_coords)
@@ -254,7 +255,7 @@ func finish_build():
 # ------------------------------------------------
 
 func make(delta):
-	if grid_pos == target_pos:
+	if is_adjacent(grid_pos, target_pos):
 		build_bar.visible = true
 		build_bar.value = make_axe_progress*10
 		if make_axe_progress>=make_axe_needed:
@@ -279,7 +280,11 @@ func make(delta):
 
 func move_to(dir):
 
-	grid_pos += GridUtils.DIR[dir]
+	var target_cell = grid_pos + GridUtils.DIR[dir]
+	if target_cell in visible_tiles:
+		print("celda ocupada")
+		return
+	grid_pos = target_cell
 	position = grid_pos * GridUtils.TILE_SIZE
 
 
@@ -289,19 +294,37 @@ func move_to_target(delta):
 		speed_cont += delta
 		return
 
-	if grid_pos == target_pos:
+	if is_adjacent(grid_pos, target_pos):
 		return
 
 	var dx = target_pos.x - grid_pos.x
 	var dy = target_pos.y - grid_pos.y
 
+	var dir_primary
+	var dir_secondary
+
 	if abs(dx) >= abs(dy):
-		move_to(GridUtils.direction.LEFT if dx > 0 else GridUtils.direction.RIGHT)
+		dir_primary = GridUtils.direction.LEFT if dx > 0 else GridUtils.direction.RIGHT
+		dir_secondary = GridUtils.direction.DOWN if dy > 0 else GridUtils.direction.UP
 	else:
-		move_to(GridUtils.direction.DOWN if dy > 0 else GridUtils.direction.UP)
+		dir_primary = GridUtils.direction.DOWN if dy > 0 else GridUtils.direction.UP
+		dir_secondary = GridUtils.direction.LEFT if dx > 0 else GridUtils.direction.RIGHT
+
+	if !try_move(dir_primary):
+		try_move(dir_secondary)
 
 	speed_cont = 0
 
+func try_move(dir) -> bool:
+
+	var next_tile = grid_pos + GridUtils.DIR[dir]
+
+	if next_tile in visible_tiles:
+		return false
+
+	grid_pos = next_tile
+	position = grid_pos * GridUtils.TILE_SIZE
+	return true
 
 # ------------------------------------------------
 # SEARCH
@@ -312,7 +335,7 @@ func find_nearest(type:String) -> Vector2i:
 	var best := INVALID
 	var best_dist := 999999
 
-	for tile in visible_tiles.keys():
+	for tile in visible_tiles:
 
 		if visible_tiles[tile] != type:
 			continue
@@ -324,7 +347,13 @@ func find_nearest(type:String) -> Vector2i:
 			best = tile
 
 	return best
-	
+
+
+func is_adjacent(a: Vector2i, b: Vector2i) -> bool:
+	var dx = abs(a.x - b.x)
+	var dy = abs(a.y - b.y)
+	return dx + dy == 1
+
 #---------------------
 	#UTILES
 #--------------------

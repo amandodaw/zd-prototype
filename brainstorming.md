@@ -159,17 +159,33 @@
   
   ## Build_wall
 
-- [ ] Crear botón build_wall
+- [x] Crear botón build_wall
   
-  - [ ] Crear build_order en array build_orders de city_comp
+  - [x] Crear build_order en array build_orders de city_comp
   
-  - [ ] Añadir datos de wall en human.gd (al final los sistemas están aquí dentro resumidos)
+  - [x] Añadir datos de wall en human.gd (al final los sistemas están aquí dentro resumidos)
   
   - No debería hacer falta mucho más, ya que debería estar hecho lo demás de build_workplace
 
-- [ ] Crear método build_workplace o modificar build() para que cree una cosa o otra según el valor del diccionario build_orders -> workplace_order o wall_order
+- [x] Crear método build_workplace o modificar build() para que cree una cosa o otra según el valor del diccionario build_orders -> workplace_order o wall_order
+  
+  ## Move_update
+  
+  - [x]  Modificar move_to para que si el tile está ocupado, no se mueva
+  
+  - [x]  Crear método para elegir un tile adyacente
+  
+  - [ ]  Cambiar acciones para que se hagan desde el tile adyacente
   
   ## Zombies
+  
+  - [ ] Mejorar movimiento de human para que evite tiles en visible_tiles. Después copiar la lógica en zombies.
+  
+  - [ ] Para ello, añadir comprobación de visible tiles antes de moverse a un tile
+  
+  - [ ] Crear sprite2d zombie sin progress bar, con un par de metodos de human find_nearest y go_to target
+  
+  - [ ] 
   
   ## Melee_attack/Combat_system(en human.gd)
   
