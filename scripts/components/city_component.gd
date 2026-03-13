@@ -10,3 +10,4 @@ var tasks : Dictionary[String, int] = {
 
 var build_orders : Dictionary[Vector2i, String] = {}
 var make_orders : Array[String] = []
+var entities : Dictionary = {}

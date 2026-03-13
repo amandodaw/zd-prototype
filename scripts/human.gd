@@ -1,22 +1,10 @@
-extends Sprite2D
+extends Entity
 
 @onready var build_bar : ProgressBar = $ProgressBar
-
-const INVALID := Vector2i(-1,-1)
-
-var grid_pos : Vector2i = Vector2i.ZERO
-var target_pos : Vector2i = INVALID
 
 var build_order : Vector2i = INVALID
 var build_type : String = ""
 var make_order : int = -1
-
-var speed := 0.1
-var speed_cont := 0.0
-
-var visible_tiles : Dictionary
-var city_comp : CityComponent
-var elements_map : TileMapLayer
 
 var workplace_cost : int = 9
 var workplace_build_progress : float = 0.0
@@ -167,12 +155,12 @@ func gather(delta):
 			return
 
 		target_pos = wood
-		visible_tiles[target_pos] = "reserved"
+		city_comp.entities[target_pos] = "reserved"
 
 	if is_adjacent(grid_pos, target_pos):
 
 		city_comp.wood_amount += 5
-		visible_tiles.erase(target_pos)
+		city_comp.entities.erase(target_pos)
 		elements_map.erase_cell(target_pos)
 		
 		reset_jobs()
@@ -229,7 +217,7 @@ func place_workplace() -> void:
 		var atlas_coords = workplace_origin + offset
 		if offset == Vector2i(2, 2):
 			#poner donde van los humanos a crear cosas. donde "ven el workshop"
-			visible_tiles.set(target_cell, "workplace")
+			city_comp.entities.set(target_cell, "workplace")
 		elements_map.set_cell(target_cell, 0, atlas_coords)
 
 func place_wall() -> void:
@@ -237,7 +225,7 @@ func place_wall() -> void:
 	var target_cell = build_order
 	var atlas_coords = wall_origin
 
-	visible_tiles.set(target_cell, "wall")
+	city_comp.entities.set(target_cell, "wall")
 	elements_map.set_cell(target_cell, 0, atlas_coords)
 		
 
@@ -274,86 +262,6 @@ func make(delta):
 
 	move_to_target(delta)
 
-# ------------------------------------------------
-# MOVEMENT
-# ------------------------------------------------
-
-func move_to(dir):
-
-	var target_cell = grid_pos + GridUtils.DIR[dir]
-	if target_cell in visible_tiles:
-		print("celda ocupada")
-		return
-	grid_pos = target_cell
-	position = grid_pos * GridUtils.TILE_SIZE
-
-
-func move_to_target(delta):
-
-	if speed_cont < speed:
-		speed_cont += delta
-		return
-
-	if is_adjacent(grid_pos, target_pos):
-		return
-
-	var dx = target_pos.x - grid_pos.x
-	var dy = target_pos.y - grid_pos.y
-
-	var dir_primary
-	var dir_secondary
-
-	if abs(dx) >= abs(dy):
-		dir_primary = GridUtils.direction.LEFT if dx > 0 else GridUtils.direction.RIGHT
-		dir_secondary = GridUtils.direction.DOWN if dy > 0 else GridUtils.direction.UP
-	else:
-		dir_primary = GridUtils.direction.DOWN if dy > 0 else GridUtils.direction.UP
-		dir_secondary = GridUtils.direction.LEFT if dx > 0 else GridUtils.direction.RIGHT
-
-	if !try_move(dir_primary):
-		try_move(dir_secondary)
-
-	speed_cont = 0
-
-func try_move(dir) -> bool:
-
-	var next_tile = grid_pos + GridUtils.DIR[dir]
-
-	if next_tile in visible_tiles:
-		return false
-
-	grid_pos = next_tile
-	position = grid_pos * GridUtils.TILE_SIZE
-	return true
-
-# ------------------------------------------------
-# SEARCH
-# ------------------------------------------------
-
-func find_nearest(type:String) -> Vector2i:
-
-	var best := INVALID
-	var best_dist := 999999
-
-	for tile in visible_tiles:
-
-		if visible_tiles[tile] != type:
-			continue
-
-		var dist = abs(tile.x - grid_pos.x) + abs(tile.y - grid_pos.y)
-
-		if dist < best_dist:
-			best_dist = dist
-			best = tile
-
-	return best
-
-
-func is_adjacent(a: Vector2i, b: Vector2i) -> bool:
-	var dx = abs(a.x - b.x)
-	var dy = abs(a.y - b.y)
-	return dx + dy == 1
-
 #---------------------
 	#UTILES
 #--------------------
@@ -366,8 +274,8 @@ func release_target():
 		Jobs.BUILD:
 			state = "workplace_order"
 	if target_pos != INVALID:
-		if visible_tiles.get(target_pos) == "reserved":
-			visible_tiles[target_pos] = state
+		if city_comp.entities.get(target_pos) == "reserved":
+			city_comp.entities[target_pos] = state
 			if current_job == Jobs.BUILD:
 				city_comp.wood_amount -= workplace_cost
 	target_pos = INVALID

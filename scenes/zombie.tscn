@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://bdo68kimivad"]
+
+[ext_resource type="Texture2D" uid="uid://cip3kwypml3qn" path="res://resources/zombie.png" id="1_1vlb3"]
+[ext_resource type="Script" uid="uid://byu3hqrgdquvy" path="res://scripts/zombie.gd" id="2_httt1"]
+
+[node name="Zombie" type="Sprite2D" unique_id=1638053067]
+texture = ExtResource("1_1vlb3")
+script = ExtResource("2_httt1")

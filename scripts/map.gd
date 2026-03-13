@@ -6,16 +6,17 @@ extends Node2D
 var ground_tile : Vector2i = Vector2i(1, 0)
 var wood_tile : Vector2i = Vector2i(10, 8)
 
-var entities : Dictionary = {}
+@onready var city_comp : CityComponent
 
 const height : int = 52
 const width : int = 72
 
-func _ready() -> void:
-	init_map()
-	add_wood(10)
 
 func init_map() -> void:
+	create_soil()
+	add_wood(20)
+
+func create_soil() -> void:
 	for i in range(width):
 		for j in range(height):
 			ground_layer.set_cell(Vector2i(i, j), 0, ground_tile)
@@ -29,8 +30,8 @@ func add_wood(amount: int) -> void:
 		)
 
 		# evitar sobreescribir otra entidad
-		if pos in entities:
+		if city_comp in city_comp.entities:
 			continue
 
 		element_layer.set_cell(pos, 0, wood_tile)
-		entities[pos] = "wood"
+		city_comp.entities[pos] = "wood"

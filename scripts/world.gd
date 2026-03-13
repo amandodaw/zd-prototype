@@ -14,18 +14,20 @@ func _ready() -> void:
 	city_comp = CityComponent.new()
 	ui.city_comp = city_comp
 	ui.elements_map = elements_map
+	map.city_comp = city_comp
+	map.init_map()
 	for i in range(2+1):
 			 
 		spawn_human(Vector2(i*GridUtils.TILE_SIZE, i*GridUtils.TILE_SIZE))
 
 func spawn_human(pos: Vector2) -> void:
-	if pos in map.entities:
+	if pos in city_comp.entities:
 		print("ESPACIO OCUPADO. HUMANO NO SPAWNEADO EN: ", pos)
 		return
 	var human = human_scene.instantiate()
 	human.position = pos
 	add_child(human)
-	human.visible_tiles = map.entities
 	human.city_comp = city_comp
 	human.elements_map = elements_map
-	map.entities[elements_map.local_to_map(pos)] = "human"
+	human.entity_type = "human"
+	city_comp.entities[elements_map.local_to_map(pos)] = "human"
