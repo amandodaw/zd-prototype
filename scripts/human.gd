@@ -43,7 +43,7 @@ func _process(delta: float) -> void:
 		city_comp.Tasks.BUILD:
 			build(delta)
 		city_comp.Tasks.MAKE:
-			pass
+			make(delta)
 		city_comp.Tasks.GATHER_RESOURCES:
 			gather(delta)
 		
@@ -63,9 +63,10 @@ func check_job(delta : float):
 			if take_build_action():
 				current_job = city_comp.Tasks.BUILD
 				return
-		if city_comp.tasks[city_comp.Tasks.MAKE]:
-			current_job = city_comp.Tasks.MAKE
-			return
+		if city_comp.tasks[city_comp.Tasks.MAKE] and !city_comp.make_orders.is_empty():
+			if take_make_action():
+				current_job = city_comp.Tasks.MAKE
+				return
 		if city_comp.tasks[city_comp.Tasks.GATHER_RESOURCES]:
 			current_job = city_comp.Tasks.GATHER_RESOURCES
 			return
@@ -185,10 +186,12 @@ func place_workplace() -> void:
 	for offset in workplace_form:
 		var target_cell = target_pos + offset
 		var atlas_coords = workplace_origin + offset
+
+		elements_map.set_cell(target_cell, 0, atlas_coords)
 		if offset == Vector2i(2, 2):
 			#poner donde van los humanos a crear cosas. donde "ven el workshop"
 			city_comp.entities.set(target_cell, "workplace")
-		elements_map.set_cell(target_cell, 0, atlas_coords)
+			continue
 		city_comp.astar.set_point_solid(target_cell, true)
 
 func place_wall() -> void:
@@ -211,6 +214,47 @@ func finish_build():
 # MAKE
 # ------------------------------------------------
 
+func make(delta: float) -> void:
+	
+	if !city_comp.tasks[city_comp.Tasks.MAKE]:
+		city_comp.wood_amount += make_axe_cost
+		reset_job()
+		return
+	
+	if grid_pos == target_pos:
+		
+		build_bar.visible = true
+
+		build_bar.value = make_axe_progress * 10
+
+		if make_axe_progress >= make_axe_needed:
+			make_axe_progress = 0
+			city_comp.axe_amount += 1
+			finish_build()
+			return
+		make_axe_progress += delta
+		return
+
+	follow_path(delta)
+
+func take_make_action() -> bool:
+	if !city_comp.make_orders.is_empty():
+		for make_order in city_comp.make_orders:
+			if city_comp.wood_amount < make_axe_cost:
+				print("not enough wood")
+				return false
+			target_pos = find_nearest("workplace")
+			if target_pos == INVALID:
+				print("no workplace available")
+				return false
+			city_comp.make_orders.erase(make_order)
+			city_comp.wood_amount -= make_axe_cost
+
+			reserve_target()
+			set_astar_path()
+			return true
+	print("no make order to take")
+	return false
 
 #---------------------
 	#UTILES
