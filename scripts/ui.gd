@@ -27,21 +27,21 @@ func _process(delta: float) -> void:
 		cont=0
 		update_resources()
 	if Input.is_action_just_pressed("mouse_left"):
-
+		var mouse_world = elements_map.get_global_mouse_position()
+		var base_cell = elements_map.local_to_map(elements_map.to_local(mouse_world))
+		var order_type : String
 		if build_workplace:
-			var mouse_world = elements_map.get_global_mouse_position()
-			var base_cell = elements_map.local_to_map(elements_map.to_local(mouse_world))
-			elements_map.set_cell(base_cell, 0, build_order)
-			city_comp.build_orders.set(base_cell, "workplace_order")
-			city_comp.astar.set_point_solid(base_cell, true)
-			build_workplace = false
+			order_type = "workplace_order"
+			place_build_order(base_cell, order_type)
 		if build_wall:
-			var mouse_world = elements_map.get_global_mouse_position()
-			var base_cell = elements_map.local_to_map(elements_map.to_local(mouse_world))
-			elements_map.set_cell(base_cell, 0, build_order)
-			city_comp.build_orders.set(base_cell, "wall_order")
-			city_comp.astar.set_point_solid(base_cell, true)
-			build_wall = false
+			order_type = "wall_order"
+			place_build_order(base_cell, order_type)
+
+	
+	if Input.is_action_just_pressed("mouse_right"):
+		print("Build order desactivada")
+		build_wall = false
+		build_workplace = false
 
 func update_resources():
 	wood_label.text = "Wood: " + str(city_comp.wood_amount)
@@ -76,3 +76,11 @@ func _on_build_button_pressed() -> void:
 func _on_make_button_pressed() -> void:
 	city_comp.tasks[city_comp.Tasks.MAKE] = !city_comp.tasks[city_comp.Tasks.MAKE]
 	make_button.text = "Make mode: " + str(city_comp.tasks[city_comp.Tasks.MAKE])
+
+func place_build_order(base_cell : Vector2i, order_type : String) -> void:
+	if elements_map.get_cell_source_id(base_cell)==-1:
+		elements_map.set_cell(base_cell, 0, build_order)
+		city_comp.build_orders.set(base_cell, order_type)
+		city_comp.astar.set_point_solid(base_cell, true)
+	else:
+		print("ubicacion no valida")

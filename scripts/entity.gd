@@ -90,6 +90,6 @@ func is_adjacent(a: Vector2i, b: Vector2i) -> bool:
 func choose_adjacent(pos: Vector2i) -> Vector2i:
 	for dir in GridUtils.DIR:
 		var new_target_cell = pos + dir
-		if !city_comp.astar.is_point_solid(new_target_cell):
+		if city_comp.astar.is_in_boundsv(new_target_cell) and !city_comp.astar.is_point_solid(new_target_cell):
 			return new_target_cell
 	return INVALID

@@ -92,7 +92,11 @@ func release_target() -> void:
 # ------------------------------------------------
 
 func gather(delta: float) ->void:
-	
+
+	if target_pos != INVALID and !city_comp.entities.has(target_pos):
+		reset_job()
+		return
+
 	if target_pos == INVALID:
 		target_pos = find_nearest("wood")
 		if target_pos == INVALID or target_pos in city_comp.reserved_tiles:
@@ -101,12 +105,15 @@ func gather(delta: float) ->void:
 			return
 		reserve_target()
 		set_astar_path()
+
 	if grid_pos == adyacent_target_pos:
 		elements_map.erase_cell(target_pos)
 		city_comp.entities.erase(target_pos)
+		city_comp.astar.set_point_solid(target_pos, false)
 		city_comp.wood_amount += 5
 		reset_job()
 		return
+
 	follow_path(delta)
 
 # ------------------------------------------------
@@ -116,6 +123,11 @@ func gather(delta: float) ->void:
 func build(delta: float) -> void:
 	
 	if !city_comp.tasks[city_comp.Tasks.BUILD]:
+		match city_comp.build_orders.get(target_pos):
+			"workplace_order":
+				city_comp.wood_amount += workplace_cost
+			"wall_order":
+				city_comp.wood_amount += wall_cost
 		reset_job()
 		return
 	
@@ -156,6 +168,10 @@ func build(delta: float) -> void:
 func take_build_action() -> bool:
 	for build_order in city_comp.build_orders.keys():
 		if build_order not in city_comp.reserved_tiles:
+			if city_comp.wood_amount < wall_cost:
+				print("not enough wood")
+				return false
+			city_comp.wood_amount -= wall_cost
 			target_pos = build_order
 			adyacent_target_pos = choose_adjacent(build_order)
 			reserve_target()
