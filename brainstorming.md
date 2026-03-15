@@ -181,6 +181,18 @@
   
   - [x] Humanos pertenecen a city_comp entities y visible_tiles eliminado por city_comp entities
   
+  ## Refactor movimiento para que use AStarGrid
+  
+  - Objetivo:  Reworkear **TODO** human que ya se han liado los metodos unos con otros.
+  
+  - Separar responsabilidades de las funciones
+  
+  - Reestructurar human.gd
+    
+    - Cambiar la forma en la que se elige trabajo
+    
+    - Cambiar primero las acciones. Reesctructurar gather de cero.
+  
   ## Zombies
   
   - [ ] ~~Mejorar movimiento de human para que evite tiles en visible_tiles. Después copiar la lógica en zombies.~~
@@ -196,6 +208,14 @@
   - [ ] Crear metodo para moverse a una pared
   
   - [ ] Si no ve humano en 3 tiles cercanas, moverse a pared. Si lo ve, cambiar a por humano
+
+## Refactor de Human.gd
+
+- [ ] Reescribir método para elegir que trabajo hacer
+
+- [ ] Reescribir movimiendo usando AStar de godot
+
+- [ ] Reescribir gather con la nueva lógica
 
 ## Melee_attack/Combat_system(en human.gd)
 

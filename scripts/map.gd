@@ -16,7 +16,6 @@ func _process(delta: float) -> void:
 
 func init_map() -> void:
 	create_soil()
-	add_wood(30)
 
 func create_soil() -> void:
 	for i in range(width):

@@ -15,14 +15,8 @@ var astar = AStarGrid2D.new()
 func _ready() -> void:
 	city_comp = CityComponent.new()
 	city_comp.astar = astar
-	ui.city_comp = city_comp
-	ui.elements_map = elements_map
 	map.city_comp = city_comp
 	map.init_map()
-	for i in range(10+1):
-		
-		spawn_human(Vector2(i*GridUtils.TILE_SIZE, i*GridUtils.TILE_SIZE))
-	
 	
 	var ground_layer : TileMapLayer = map.ground_layer
 	astar.region = ground_layer.get_used_rect()
@@ -31,6 +25,15 @@ func _ready() -> void:
 	astar.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_NEVER
 
 	astar.update()
+
+	map.add_wood(30)
+
+	ui.city_comp = city_comp
+	ui.elements_map = elements_map
+	for i in range(2+1):
+		
+		spawn_human(Vector2(i*GridUtils.TILE_SIZE, i*GridUtils.TILE_SIZE))
+
 
 func spawn_human(pos: Vector2) -> void:
 	var cell = elements_map.local_to_map(pos)

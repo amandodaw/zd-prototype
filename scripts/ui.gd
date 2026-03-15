@@ -4,6 +4,8 @@ extends Control
 @onready var axe_label : Label = $TopBar/Resources/HBoxContainer/AxeLabel
 
 @onready var gather_button : Button = $BottomPanel/Orders/VBoxContainer/GatherButton
+@onready var build_button : Button = $BottomPanel/Orders/VBoxContainer/BuildButton
+@onready var make_button : Button = $BottomPanel/Orders/VBoxContainer/MakeButton
 @onready var make_axe_button : Button = $BottomPanel/Orders/VBoxContainer/MakeAxe
 
 var city_comp : CityComponent
@@ -45,8 +47,8 @@ func update_resources():
 
 
 func _on_gather_button_pressed() -> void:
-	city_comp.tasks["gather_resources"] = !city_comp.tasks["gather_resources"]
-	gather_button.text = "Gather resources: " + str(city_comp.tasks["gather_resources"])
+	city_comp.tasks[city_comp.Tasks.GATHER_RESOURCES] = !city_comp.tasks[city_comp.Tasks.GATHER_RESOURCES]
+	gather_button.text = "Gather resources: " + str(city_comp.tasks[city_comp.Tasks.GATHER_RESOURCES])
 
 
 func _on_build_workshop_pressed() -> void:
@@ -62,3 +64,13 @@ func _on_make_sword_pressed() -> void:
 func _on_build_wall_pressed() -> void:
 	build_wall = true
 	print("build wall activated")
+
+
+func _on_build_button_pressed() -> void:
+	city_comp.tasks[city_comp.Tasks.BUILD] = !city_comp.tasks[city_comp.Tasks.BUILD]
+	build_button.text = "Build mode: " + str(city_comp.tasks[city_comp.Tasks.BUILD])
+
+
+func _on_make_button_pressed() -> void:
+	city_comp.tasks[city_comp.Tasks.MAKE] = !city_comp.tasks[city_comp.Tasks.MAKE]
+	make_button.text = "Make mode: " + str(city_comp.tasks[city_comp.Tasks.MAKE])
