@@ -5,6 +5,7 @@ const INVALID := Vector2i(-1,-1)
 
 var grid_pos : Vector2i = Vector2i.ZERO
 var target_pos : Vector2i = INVALID
+var adyacent_target_pos : Vector2i = INVALID
 
 var speed := 0.1
 var speed_cont := 0.0
@@ -21,14 +22,35 @@ var path_index = 0
 # PATH
 # ------------------------------------------------
 
-func set_astar_path():
+func set_astar_path() ->void:
 	
 	if city_comp.astar.is_point_solid(target_pos):
-		target_pos =  choose_adjacent(target_pos)
+		adyacent_target_pos =  choose_adjacent(target_pos)
 		if target_pos == INVALID:
 			print("no valid path")
 	
-	path = city_comp.astar.get_id_path(grid_pos, target_pos)
+	path = city_comp.astar.get_id_path(grid_pos, adyacent_target_pos)
+
+func follow_path(delta : float) ->void:
+	if speed_cont>=speed:
+		speed_cont=0
+		if grid_pos==path[0]: 
+			path.pop_at(0)
+		move_to_path_point()
+		return 
+	speed_cont += delta
+	
+	
+
+# ------------------------------------------------
+# MOVE
+# ------------------------------------------------
+
+func move_to_path_point():
+	if path.is_empty():
+		return
+	grid_pos = path[0]
+	position = grid_pos*GridUtils.TILE_SIZE
 
 # ------------------------------------------------
 # UTILS

@@ -74,6 +74,7 @@ func check_job(delta : float):
 	check_job_count += delta
 
 func reset_job() ->void:
+	target_pos = INVALID
 	current_job = city_comp.Tasks.IDLE
 
 # ------------------------------------------------
@@ -88,10 +89,13 @@ func gather(delta: float) ->void:
 			print("no wood to take")
 			reset_job()
 		set_astar_path()
-		print(path)
-		print(grid_pos, target_pos)
-		print(city_comp.astar.is_point_solid(grid_pos), city_comp.astar.is_point_solid(target_pos))
-			
+	if grid_pos == adyacent_target_pos:
+		elements_map.erase_cell(target_pos)
+		city_comp.entities.erase(target_pos)
+		city_comp.wood_amount += 5
+		reset_job()
+		return
+	follow_path(delta)
 
 # ------------------------------------------------
 # BUILD
