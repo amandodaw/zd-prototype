@@ -57,10 +57,12 @@ func check_job(delta : float):
 
 	if  check_job_count >= check_job_timer:
 		check_job_count = 0
-
-		if city_comp.tasks[city_comp.Tasks.BUILD]:
-			current_job = city_comp.Tasks.BUILD
+		if current_job != city_comp.Tasks.IDLE and city_comp.tasks[current_job]:
 			return
+		if city_comp.tasks[city_comp.Tasks.BUILD]:
+			if take_build_action():
+				current_job = city_comp.Tasks.BUILD
+				return
 		if city_comp.tasks[city_comp.Tasks.MAKE]:
 			current_job = city_comp.Tasks.MAKE
 			return
@@ -98,7 +100,6 @@ func gather(delta: float) ->void:
 			return
 		reserve_target()
 		set_astar_path()
-	#print("posicion: ", grid_pos, " adyacente: ", adyacent_target_pos, " target: ", target_pos)
 	if grid_pos == adyacent_target_pos:
 		elements_map.erase_cell(target_pos)
 		city_comp.entities.erase(target_pos)
@@ -112,14 +113,11 @@ func gather(delta: float) ->void:
 # ------------------------------------------------
 
 func build(delta: float) -> void:
-	if target_pos == INVALID:
-		if not take_build_action():
-			print("no build order to take")
-			reset_job()
-			return
-		reserve_target()
-		set_astar_path()
-	#print("posicion: ", grid_pos, " adyacente: ", adyacent_target_pos, " target: ", target_pos)
+	
+	if !city_comp.tasks[city_comp.Tasks.BUILD]:
+		reset_job()
+		return
+	
 	if grid_pos == target_pos:
 		print("building brr brr")
 
@@ -130,7 +128,12 @@ func take_build_action() -> bool:
 		if build_order not in city_comp.reserved_tiles:
 			target_pos = build_order
 			adyacent_target_pos = choose_adjacent(build_order)
+			reserve_target()
+			set_astar_path()
 			return true
+			
+	print("no build order to take")
+	reset_job()
 	return false
 
 # ------------------------------------------------

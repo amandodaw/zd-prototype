@@ -14,7 +14,8 @@ enum Tasks {
 var tasks : Dictionary[int, bool] = {
 	Tasks.GATHER_RESOURCES : false,
 	Tasks.BUILD : false,
-	Tasks.MAKE : false
+	Tasks.MAKE : false,
+	Tasks.IDLE : false
 }
 
 var build_orders : Dictionary[Vector2i, String] = {}
