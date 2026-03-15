@@ -96,6 +96,7 @@ func try_take_build_order() -> bool:
 				return false
 			release_target()
 			target_pos = pos
+			set_path()
 			build_order = pos
 			build_type = "workplace"
 			city_comp.build_orders[pos] = "reserved"
@@ -108,6 +109,7 @@ func try_take_build_order() -> bool:
 				return false
 			release_target()
 			target_pos = pos
+			set_path()
 			build_order = pos
 			build_type = "wall"
 			city_comp.build_orders[pos] = "reserved"
@@ -130,6 +132,7 @@ func try_take_make_order() -> bool:
 				return false
 			release_target()
 			target_pos = find_nearest("workplace")
+			set_path()
 			make_order = i
 			city_comp.make_orders[i] = "reserved"
 			city_comp.wood_amount -= make_axe_cost
@@ -139,6 +142,8 @@ func try_take_make_order() -> bool:
 
 func reset_jobs() ->void:
 	current_job = Jobs.IDLE
+	clear_path()
+	update_job()
 
 # ------------------------------------------------
 # GATHER
@@ -155,19 +160,33 @@ func gather(delta):
 			return
 
 		target_pos = wood
+		set_path()
 		city_comp.entities[target_pos] = "reserved"
+
+
+	if target_pos != INVALID:
+		if !city_comp.entities.has(target_pos):
+			reset_jobs()
+			target_pos = INVALID
+			clear_path()
+			return
+
 
 	if is_adjacent(grid_pos, target_pos):
 
 		city_comp.wood_amount += 5
 		city_comp.entities.erase(target_pos)
 		elements_map.erase_cell(target_pos)
-		
+		city_comp.astar.set_point_solid(target_pos, false)
+
+		clear_path()
 		reset_jobs()
 		target_pos = INVALID
 		return
 
-	move_to_target(delta)
+
+	follow_path(delta)
+
 
 
 # ------------------------------------------------
@@ -209,7 +228,7 @@ func build(delta):
 			wall_progress += delta
 			return
 
-	move_to_target(delta)
+	follow_path(delta)
 
 func place_workplace() -> void:
 	for offset in workplace_form:
@@ -219,6 +238,7 @@ func place_workplace() -> void:
 			#poner donde van los humanos a crear cosas. donde "ven el workshop"
 			city_comp.entities.set(target_cell, "workplace")
 		elements_map.set_cell(target_cell, 0, atlas_coords)
+		city_comp.astar.set_point_solid(target_cell, true)
 
 func place_wall() -> void:
 
@@ -227,6 +247,7 @@ func place_wall() -> void:
 
 	city_comp.entities.set(target_cell, "wall")
 	elements_map.set_cell(target_cell, 0, atlas_coords)
+	city_comp.astar.set_point_solid(target_cell, true)
 		
 
 func finish_build():
@@ -260,7 +281,7 @@ func make(delta):
 		make_axe_progress += delta
 		return
 
-	move_to_target(delta)
+	follow_path(delta)
 
 #---------------------
 	#UTILES
@@ -279,3 +300,4 @@ func release_target():
 			if current_job == Jobs.BUILD:
 				city_comp.wood_amount -= workplace_cost
 	target_pos = INVALID
+	clear_path()

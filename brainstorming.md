@@ -173,11 +173,11 @@
   
   - [x] Modificar move_to para que si el tile está ocupado, no se mueva
   
-  - [x]  Crear método para elegir un tile adyacente
+  - [x] Crear método para elegir un tile adyacente
   
-  - [x]  Cambiar acciones para que se hagan desde el tile adyacente
+  - [x] Cambiar acciones para que se hagan desde el tile adyacente
   
-  - [x]  Eligen direccion aleatoria si esta ocupada el destino
+  - [x] Eligen direccion aleatoria si esta ocupada el destino
   
   - [x] Humanos pertenecen a city_comp entities y visible_tiles eliminado por city_comp entities
   
@@ -196,11 +196,9 @@
   - [ ] Crear metodo para moverse a una pared
   
   - [ ] Si no ve humano en 3 tiles cercanas, moverse a pared. Si lo ve, cambiar a por humano
-  
-  
-  
-  ## Melee_attack/Combat_system(en human.gd)
-  
-  ## Ciclo día/Noche (en city_comp)
-  
-  ## DISFRUTAR DEL GAMEPLAY
+
+## Melee_attack/Combat_system(en human.gd)
+
+## Ciclo día/Noche (en city_comp)
+
+## DISFRUTAR DEL GAMEPLAY

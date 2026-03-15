@@ -32,13 +32,14 @@ func add_wood(amount: int) -> void:
 		)
 
 		# evitar sobreescribir otra entidad
-		if city_comp in city_comp.entities:
+		if pos in city_comp.entities:
 			continue
 
 		element_layer.set_cell(pos, 0, wood_tile)
+		city_comp.astar.set_point_solid(pos, true)
 		city_comp.entities[pos] = "wood"
 
 func check_wood() -> void:
-	if city_comp.entities.find_key("wood")==null and city_comp.entities.find_key("reserved") == null:
+	if not city_comp.entities.values().has("wood") and not city_comp.entities.values().has("reserved"):
 		add_wood(10)
 		
