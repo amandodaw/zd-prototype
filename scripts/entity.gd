@@ -26,12 +26,14 @@ func set_astar_path() ->void:
 	
 	if city_comp.astar.is_point_solid(target_pos):
 		adyacent_target_pos =  choose_adjacent(target_pos)
-		if target_pos == INVALID:
+		if adyacent_target_pos == INVALID:
 			print("no valid path")
 	
 	path = city_comp.astar.get_id_path(grid_pos, adyacent_target_pos)
 
 func follow_path(delta : float) ->void:
+	if path.is_empty():
+		return
 	if speed_cont>=speed:
 		speed_cont=0
 		if grid_pos==path[0]: 
@@ -64,6 +66,9 @@ func find_nearest(type:String) -> Vector2i:
 	for tile in city_comp.entities:
 
 		if city_comp.entities[tile] != type:
+			continue
+			
+		if tile in city_comp.reserved_tiles:
 			continue
 
 		var dist = abs(tile.x - grid_pos.x) + abs(tile.y - grid_pos.y)

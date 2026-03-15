@@ -18,6 +18,7 @@ var tasks : Dictionary[int, bool] = {
 }
 
 var build_orders : Dictionary[Vector2i, String] = {}
+var reserved_tiles : Dictionary[Vector2i, bool] = {}
 var make_orders : Array[String] = []
 var entities : Dictionary = {}
 

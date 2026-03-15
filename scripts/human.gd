@@ -74,9 +74,16 @@ func check_job(delta : float):
 	check_job_count += delta
 
 func reset_job() ->void:
+	release_target()
 	target_pos = INVALID
 	current_job = city_comp.Tasks.IDLE
 
+func reserve_target() -> void:
+	city_comp.reserved_tiles.set(target_pos, true)
+
+func release_target() -> void:
+	if target_pos in city_comp.reserved_tiles:
+		city_comp.reserved_tiles.erase(target_pos)
 # ------------------------------------------------
 # GATHER
 # ------------------------------------------------
@@ -85,9 +92,11 @@ func gather(delta: float) ->void:
 	
 	if target_pos == INVALID:
 		target_pos = find_nearest("wood")
-		if target_pos == INVALID:
+		if target_pos == INVALID or target_pos in city_comp.reserved_tiles:
 			print("no wood to take")
 			reset_job()
+			return
+		reserve_target()
 		set_astar_path()
 	if grid_pos == adyacent_target_pos:
 		elements_map.erase_cell(target_pos)
