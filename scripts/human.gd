@@ -59,7 +59,7 @@ func check_job(delta : float):
 		check_job_count = 0
 		if current_job != city_comp.Tasks.IDLE and city_comp.tasks[current_job]:
 			return
-		if city_comp.tasks[city_comp.Tasks.BUILD]:
+		if city_comp.tasks[city_comp.Tasks.BUILD] and !city_comp.build_orders.is_empty():
 			if take_build_action():
 				current_job = city_comp.Tasks.BUILD
 				return
@@ -79,6 +79,7 @@ func reset_job() ->void:
 	release_target()
 	target_pos = INVALID
 	current_job = city_comp.Tasks.IDLE
+	path.clear()
 
 func reserve_target() -> void:
 	city_comp.reserved_tiles.set(target_pos, true)
@@ -118,8 +119,37 @@ func build(delta: float) -> void:
 		reset_job()
 		return
 	
-	if grid_pos == target_pos:
-		print("building brr brr")
+	if grid_pos == adyacent_target_pos:
+		
+		build_bar.visible = true
+		
+		match city_comp.build_orders.get(target_pos):
+			"workplace_order":
+				
+				build_bar.value = workplace_build_progress * 10
+
+				if workplace_build_progress >= workplace_build_needed:
+					workplace_build_progress = 0
+					place_workplace()
+					city_comp.build_orders.erase(target_pos)
+					finish_build()
+					return
+				workplace_build_progress += delta
+				return
+
+			"wall_order":
+
+				build_bar.value = wall_progress * 10
+
+				if wall_progress >= wall_needed:
+					wall_progress = 0
+					place_wall()
+					city_comp.build_orders.erase(target_pos)
+					finish_build()
+					return
+
+				wall_progress += delta
+				return
 
 	follow_path(delta)
 
@@ -133,8 +163,33 @@ func take_build_action() -> bool:
 			return true
 			
 	print("no build order to take")
-	reset_job()
 	return false
+
+func place_workplace() -> void:
+	for offset in workplace_form:
+		var target_cell = target_pos + offset
+		var atlas_coords = workplace_origin + offset
+		if offset == Vector2i(2, 2):
+			#poner donde van los humanos a crear cosas. donde "ven el workshop"
+			city_comp.entities.set(target_cell, "workplace")
+		elements_map.set_cell(target_cell, 0, atlas_coords)
+		city_comp.astar.set_point_solid(target_cell, true)
+
+func place_wall() -> void:
+
+	var target_cell = target_pos
+	var atlas_coords = wall_origin
+
+	city_comp.entities.set(target_cell, "wall")
+	elements_map.set_cell(target_cell, 0, atlas_coords)
+	city_comp.astar.set_point_solid(target_cell, true)
+		
+
+func finish_build():
+	
+	reset_job()
+	build_bar.visible = false
+
 
 # ------------------------------------------------
 # MAKE

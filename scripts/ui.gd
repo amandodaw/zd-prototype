@@ -33,12 +33,14 @@ func _process(delta: float) -> void:
 			var base_cell = elements_map.local_to_map(elements_map.to_local(mouse_world))
 			elements_map.set_cell(base_cell, 0, build_order)
 			city_comp.build_orders.set(base_cell, "workplace_order")
+			city_comp.astar.set_point_solid(base_cell, true)
 			build_workplace = false
 		if build_wall:
 			var mouse_world = elements_map.get_global_mouse_position()
 			var base_cell = elements_map.local_to_map(elements_map.to_local(mouse_world))
 			elements_map.set_cell(base_cell, 0, build_order)
 			city_comp.build_orders.set(base_cell, "wall_order")
+			city_comp.astar.set_point_solid(base_cell, true)
 			build_wall = false
 
 func update_resources():
