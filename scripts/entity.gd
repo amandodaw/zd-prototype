@@ -23,13 +23,15 @@ var path_index = 0
 # ------------------------------------------------
 
 func set_astar_path() ->void:
-	
+	var choosed_pos = target_pos
 	if city_comp.astar.is_point_solid(target_pos):
 		adyacent_target_pos =  choose_adjacent(target_pos)
-		if adyacent_target_pos == INVALID:
-			print("no valid path")
+		choosed_pos = adyacent_target_pos
+	if choosed_pos == INVALID:
+		print("no path to take")
+		return
 	
-	path = city_comp.astar.get_id_path(grid_pos, adyacent_target_pos)
+	path = city_comp.astar.get_id_path(grid_pos, choosed_pos)
 
 func follow_path(delta : float) ->void:
 	if path.is_empty():

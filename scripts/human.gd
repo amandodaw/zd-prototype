@@ -2,9 +2,9 @@ extends Entity
 
 @onready var build_bar : ProgressBar = $ProgressBar
 
-var build_order : Vector2i = INVALID
-var build_type : String = ""
-var make_order : int = -1
+#var build_order : Vector2i = INVALID
+#var build_type : String = ""
+#var make_order : int = -1
 
 var workplace_cost : int = 9
 var workplace_build_progress : float = 0.0
@@ -41,7 +41,7 @@ func _process(delta: float) -> void:
 	check_job(delta)
 	match current_job:
 		city_comp.Tasks.BUILD:
-			pass
+			build(delta)
 		city_comp.Tasks.MAKE:
 			pass
 		city_comp.Tasks.GATHER_RESOURCES:
@@ -98,6 +98,7 @@ func gather(delta: float) ->void:
 			return
 		reserve_target()
 		set_astar_path()
+	#print("posicion: ", grid_pos, " adyacente: ", adyacent_target_pos, " target: ", target_pos)
 	if grid_pos == adyacent_target_pos:
 		elements_map.erase_cell(target_pos)
 		city_comp.entities.erase(target_pos)
@@ -110,6 +111,27 @@ func gather(delta: float) ->void:
 # BUILD
 # ------------------------------------------------
 
+func build(delta: float) -> void:
+	if target_pos == INVALID:
+		if not take_build_action():
+			print("no build order to take")
+			reset_job()
+			return
+		reserve_target()
+		set_astar_path()
+	#print("posicion: ", grid_pos, " adyacente: ", adyacent_target_pos, " target: ", target_pos)
+	if grid_pos == target_pos:
+		print("building brr brr")
+
+	follow_path(delta)
+
+func take_build_action() -> bool:
+	for build_order in city_comp.build_orders.keys():
+		if build_order not in city_comp.reserved_tiles:
+			target_pos = build_order
+			adyacent_target_pos = choose_adjacent(build_order)
+			return true
+	return false
 
 # ------------------------------------------------
 # MAKE
