@@ -211,11 +211,35 @@
 
 ## Refactor de Human.gd
 
-- [ ] Reescribir método para elegir que trabajo hacer
+- [x] Reescribir método para elegir que trabajo hacer
 
-- [ ] Reescribir movimiendo usando AStar de godot
+- [x] Reescribir movimiendo usando AStar de godot
 
-- [ ] Reescribir gather con la nueva lógica
+- [x] Reescribir gather con la nueva lógica
+
+# Tareas  hechas 16/03/26
+
+- Sistema de trabajos simple
+
+- Make action va al workplace.
+
+- Build action puede buguearse si se empieza a construir desde un sitio que formará parte del edificio.  También el progreso ocurre dentro de human.gd. En el futuro hay que crear un componente workplace que mantenga el progreso de construcción/creación
+
+- Gather action coge madera en el mapa
+
+- Movimiento ahora funciona con Astar pathfinding de godot
+
+- Creado array de tiles reservados por trabajos en city_comp y eliminadas variables redundantes de human.gd
+
+## Next steps
+
+- Seguir las siguientes implementaciones
+  
+  - Zombies que se mueven hacia una pared o hacia un humano si está en 3 tiles cercanas
+  
+  - Sistema de combate. Estado/trabajo combatir. Se elige un target, se va a su tile adyacente y se le pega con un timer. 3 hp, cada 1 delta un ataque.
+  
+  - Ciclo de día y noche. Por la noche spawnean zombies. 60 segundos dedía, 30 de noche.
 
 ## Melee_attack/Combat_system(en human.gd)
 
