@@ -66,20 +66,40 @@ func move_to_path_point():
 	position = grid_pos*GridUtils.TILE_SIZE
 	
 	city_comp.living_entities.set(grid_pos, self)
+	
 
 # ------------------------------------------------
 # COMBAT
 # ------------------------------------------------
 
 func take_damage(damage_amount : int) -> void:
+	modulate = Color.RED
 	health -= damage_amount
 	if health==0:
-		print("Muerto ", self)
+		die()
+	await get_tree().create_timer(0.33).timeout
+	modulate = Color.WHITE
 
+func attack(delta : float) -> void:
+	if target!=null:
+		target_pos = target.grid_pos
+	if is_adjacent(grid_pos, target_pos):
+		if attack_cooldown<attack_speed:
+			attack_cooldown+=delta
+			return
+		attack_cooldown=0
+		target.take_damage(attack_damage)
+		print(target, " ahora tiene ", str(target.health))
+		return
+	set_astar_path()
+	follow_path(delta)
 
 # ------------------------------------------------
 # UTILS
 # ------------------------------------------------
+
+func die() -> void:
+	queue_free()
 
 func find_nearest(type:String) -> Vector2i:
 
@@ -108,7 +128,7 @@ func find_nearest_alive(type:String) -> Vector2i:
 	var best_dist := 999999
 	
 	for tile in city_comp.living_entities.keys():
-		if city_comp.living_entities[tile].entity_type != type:
+		if !is_instance_valid(city_comp.living_entities[tile]) or city_comp.living_entities[tile].entity_type != type:
 			continue
 		var dist = abs(tile.x - grid_pos.x) + abs(tile.y - grid_pos.y)
 

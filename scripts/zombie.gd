@@ -10,7 +10,7 @@ enum States {
 var state : States = States.ATTACK
 
 func _process(delta: float) -> void:
-	follow_path(delta)
+	attack(delta)
 	if find_cont<find_threshold:
 		find_cont += delta
 		return
@@ -23,8 +23,9 @@ func find_human() ->bool:
 		print("no human found")
 		return false
 	
-	if check_target_in_range(3):
+	if check_target_in_range(10):
 		print("human in range", grid_pos, target_pos)
+		target = city_comp.living_entities[target_pos]
 		return true
 	
 	print("no human in range")
@@ -35,6 +36,7 @@ func choose_target() -> void:
 		set_astar_path()
 		return
 	target_pos = find_nearest("wall")
+	print(target_pos)
 	if target_pos == INVALID:
 		print("no human or wall to attack")
 		return
