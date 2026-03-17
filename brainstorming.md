@@ -243,6 +243,18 @@
 
 ## Melee_attack/Combat_system(en human.gd)
 
+- [x] Crear variables health, attack speed y attack damage en entity.gd y asignarlas en ready de cada script
+
+- [x] Como deberia acceder a la variable de la otra entidad? Crear referencia target de tipo ~~Sprite2d~~ Entidad entity.gd y asignarlo al atacar o otra forma
+
+- [x] Crear estado atacar.
+
+- [ ] Asignar target a la entidad y haer referencia a su posicion en los metodos.
+
+- [ ] Crear metodos take_damage en entity.gd
+
+- [ ] Crear metodos atacar, cuando el estado es atacar. Atacar-> Si esta adyacente ataca, si no se mueve. Si ya no existe objetivo, resetear target.
+
 ## Ciclo día/Noche (en city_comp)
 
 ## DISFRUTAR DEL GAMEPLAY
