@@ -235,7 +235,7 @@
 
 - Seguir las siguientes implementaciones
   
-  - Zombies que se mueven hacia una pared o hacia un humano si está en 3 tiles cercanas
+  - Zombies que se mueven hacia una pared o hacia un humano si está en 3 tiles cercanas (HECHO)
   
   - Sistema de combate. Estado/trabajo combatir. Se elige un target, se va a su tile adyacente y se le pega con un timer. 3 hp, cada 1 delta un ataque.
   

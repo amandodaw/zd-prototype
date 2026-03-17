@@ -51,7 +51,7 @@ func spawn_human(pos: Vector2) -> void:
 	human.city_comp = city_comp
 	human.elements_map = elements_map
 	human.entity_type = "human"
-	city_comp.entities[elements_map.local_to_map(pos)] = "human"
+	city_comp.living_entities.set(cell, human)
 
 func spawn_zombie(pos: Vector2) -> void:
 	var cell = elements_map.local_to_map(pos)
@@ -66,4 +66,4 @@ func spawn_zombie(pos: Vector2) -> void:
 	zombie.city_comp = city_comp
 	zombie.elements_map = elements_map
 	zombie.entity_type = "zombie"
-	city_comp.entities[elements_map.local_to_map(pos)] = "zombie"
+	city_comp.living_entities.set(cell, zombie)

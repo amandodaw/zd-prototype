@@ -3,6 +3,12 @@ extends Entity
 var find_cont : float = 0.0
 var find_threshold : float = 2.0
 
+enum States {
+	ATTACK
+}
+
+var state : States = States.ATTACK
+
 func _process(delta: float) -> void:
 	follow_path(delta)
 	if find_cont<find_threshold:
@@ -12,13 +18,13 @@ func _process(delta: float) -> void:
 	choose_target()
 
 func find_human() ->bool:
-	target_pos = find_nearest("human")
+	target_pos = find_nearest_alive("human")
 	if target_pos == INVALID:
 		print("no human found")
 		return false
 	
 	if check_target_in_range(3):
-		print("human in range")
+		print("human in range", grid_pos, target_pos)
 		return true
 	
 	print("no human in range")

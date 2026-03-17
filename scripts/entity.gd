@@ -18,6 +18,13 @@ var entity_type : String
 var path : Array[Vector2i]
 var path_index = 0
 
+var health : int = 3
+var attack_speed : float = 3.0
+var attack_damage : int = 1
+var attack_cooldown : float = 0.0
+
+var target : Entity
+
 # ------------------------------------------------
 # PATH
 # ------------------------------------------------
@@ -53,12 +60,22 @@ func follow_path(delta : float) ->void:
 func move_to_path_point():
 	if path.is_empty():
 		return
-	city_comp.entities.erase(grid_pos)
+	city_comp.living_entities.erase(grid_pos)
 	
 	grid_pos = path[0]
 	position = grid_pos*GridUtils.TILE_SIZE
 	
-	city_comp.entities.set(grid_pos, entity_type)
+	city_comp.living_entities.set(grid_pos, self)
+
+# ------------------------------------------------
+# COMBAT
+# ------------------------------------------------
+
+func take_damage(damage_amount : int) -> void:
+	health -= damage_amount
+	if health==0:
+		print("Muerto ", self)
+
 
 # ------------------------------------------------
 # UTILS
@@ -85,6 +102,21 @@ func find_nearest(type:String) -> Vector2i:
 
 	return best
 
+func find_nearest_alive(type:String) -> Vector2i:
+
+	var best := INVALID
+	var best_dist := 999999
+	
+	for tile in city_comp.living_entities.keys():
+		if city_comp.living_entities[tile].entity_type != type:
+			continue
+		var dist = abs(tile.x - grid_pos.x) + abs(tile.y - grid_pos.y)
+
+		if dist < best_dist:
+			best_dist = dist
+			best = tile
+
+	return best
 
 func is_adjacent(a: Vector2i, b: Vector2i) -> bool:
 	var dx = abs(a.x - b.x)
