@@ -2,6 +2,7 @@ extends Node2D
 class_name World
 
 var human_scene = preload("res://scenes/human.tscn")
+var zombie_scene = preload("res://scenes/zombie.tscn")
 
 @onready var map : Node2D = $Map
 @onready var elements_map : TileMapLayer = $Map/ElementsLayer
@@ -33,6 +34,8 @@ func _ready() -> void:
 	for i in range(2+1):
 		
 		spawn_human(Vector2(i*GridUtils.TILE_SIZE, i*GridUtils.TILE_SIZE))
+	
+	spawn_zombie(Vector2(16*GridUtils.TILE_SIZE, 16*GridUtils.TILE_SIZE))
 
 
 func spawn_human(pos: Vector2) -> void:
@@ -49,3 +52,18 @@ func spawn_human(pos: Vector2) -> void:
 	human.elements_map = elements_map
 	human.entity_type = "human"
 	city_comp.entities[elements_map.local_to_map(pos)] = "human"
+
+func spawn_zombie(pos: Vector2) -> void:
+	var cell = elements_map.local_to_map(pos)
+
+	if cell in city_comp.entities:
+		print("ESPACIO OCUPADO. HUMANO NO SPAWNEADO EN: ", pos)
+		return
+	var zombie = zombie_scene.instantiate()
+	zombie.position = pos
+	zombie.grid_pos = elements_map.local_to_map(pos)
+	add_child(zombie)
+	zombie.city_comp = city_comp
+	zombie.elements_map = elements_map
+	zombie.entity_type = "zombie"
+	city_comp.entities[elements_map.local_to_map(pos)] = "zombie"

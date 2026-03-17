@@ -53,8 +53,12 @@ func follow_path(delta : float) ->void:
 func move_to_path_point():
 	if path.is_empty():
 		return
+	city_comp.entities.erase(grid_pos)
+	
 	grid_pos = path[0]
 	position = grid_pos*GridUtils.TILE_SIZE
+	
+	city_comp.entities.set(grid_pos, entity_type)
 
 # ------------------------------------------------
 # UTILS
@@ -87,9 +91,41 @@ func is_adjacent(a: Vector2i, b: Vector2i) -> bool:
 	var dy = abs(a.y - b.y)
 	return max(dx, dy) == 1
 
-func choose_adjacent(pos: Vector2i) -> Vector2i:
-	for dir in GridUtils.DIR:
-		var new_target_cell = pos + dir
-		if city_comp.astar.is_in_boundsv(new_target_cell) and !city_comp.astar.is_point_solid(new_target_cell):
-			return new_target_cell
-	return INVALID
+func choose_adjacent(target: Vector2i) -> Vector2i:
+	var best_pos = INVALID
+	var best_dist = INF
+	
+	var directions = [
+		Vector2i(0, -1), # arriba
+		Vector2i(0, 1),  # abajo
+		Vector2i(-1, 0), # izquierda
+		Vector2i(1, 0)   # derecha
+	]
+	
+	for dir in directions:
+		var candidate = target + dir
+		
+		# comprobar si es válida
+		if not is_cell_walkable(candidate):
+			continue
+		
+		# distancia desde el humano
+		var dist = abs(candidate.x - grid_pos.x) + abs(candidate.y - grid_pos.y)
+		
+		if dist < best_dist:
+			best_dist = dist
+			best_pos = candidate
+	
+	return best_pos
+
+func is_cell_walkable(cell: Vector2i) -> bool:
+	if city_comp.astar.is_point_solid(cell):
+		return false
+	if cell in city_comp.reserved_tiles:
+		return false
+	return true
+
+func check_target_in_range(range : int) -> bool:
+	if abs(target_pos.x - grid_pos.x) + abs(target_pos.y - grid_pos.y) <= range:
+		return true
+	return false

@@ -5,4 +5,5 @@
 
 [node name="Zombie" type="Sprite2D" unique_id=1638053067]
 texture = ExtResource("1_1vlb3")
+centered = false
 script = ExtResource("2_httt1")
