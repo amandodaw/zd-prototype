@@ -82,12 +82,6 @@ func reset_job() ->void:
 	current_job = city_comp.Tasks.IDLE
 	path.clear()
 
-func reserve_target() -> void:
-	city_comp.reserved_tiles.set(target_pos, true)
-
-func release_target() -> void:
-	if target_pos in city_comp.reserved_tiles:
-		city_comp.reserved_tiles.erase(target_pos)
 # ------------------------------------------------
 # GATHER
 # ------------------------------------------------

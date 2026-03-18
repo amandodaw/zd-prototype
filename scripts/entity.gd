@@ -99,6 +99,7 @@ func attack(delta : float) -> void:
 # ------------------------------------------------
 
 func die() -> void:
+	release_target()
 	queue_free()
 
 func find_nearest(type:String) -> Vector2i:
@@ -181,3 +182,10 @@ func check_target_in_range(range : int) -> bool:
 	if abs(target_pos.x - grid_pos.x) + abs(target_pos.y - grid_pos.y) <= range:
 		return true
 	return false
+
+func reserve_target() -> void:
+	city_comp.reserved_tiles.set(target_pos, true)
+
+func release_target() -> void:
+	if target_pos in city_comp.reserved_tiles:
+		city_comp.reserved_tiles.erase(target_pos)

@@ -241,6 +241,12 @@
   
   - Ciclo de día y noche. Por la noche spawnean zombies. 60 segundos dedía, 30 de noche.
 
+## Crear entidad pared
+
+- Añadirla a city_comp.living_entities
+
+- Darle script que hereda de entidad (En el futuro, con componentes, no tendrá todos los métodos de entidad que no usa)
+
 ## Melee_attack/Combat_system(en human.gd)
 
 - [x] Crear variables health, attack speed y attack damage en entity.gd y asignarlas en ready de cada script
@@ -249,11 +255,11 @@
 
 - [x] Crear estado atacar.
 
-- [ ] Asignar target a la entidad y haer referencia a su posicion en los metodos.
+- [x] Asignar target a la entidad y haer referencia a su posicion en los metodos.
 
-- [ ] Crear metodos take_damage en entity.gd
+- [x] Crear metodos take_damage en entity.gd
 
-- [ ] Crear metodos atacar, cuando el estado es atacar. Atacar-> Si esta adyacente ataca, si no se mueve. Si ya no existe objetivo, resetear target.
+- [x] Crear metodos atacar, cuando el estado es atacar. Atacar-> Si esta adyacente ataca, si no se mueve. Si ya no existe objetivo, resetear target.
 
 ## Ciclo día/Noche (en city_comp)
 
