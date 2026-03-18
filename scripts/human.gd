@@ -196,7 +196,13 @@ func place_wall() -> void:
 	city_comp.entities.set(target_cell, "wall")
 	elements_map.set_cell(target_cell, 0, atlas_coords)
 	city_comp.astar.set_point_solid(target_cell, true)
-		
+	var wall = Wall.new()
+	city_comp.living_entities.set(target_cell, wall)
+	wall.entity_type = "wall"
+	wall.grid_pos = target_cell
+	wall.city_comp = city_comp
+	wall.elements_map = elements_map
+	
 
 func finish_build():
 	

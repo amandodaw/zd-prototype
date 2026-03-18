@@ -31,6 +31,8 @@ var target : Entity
 
 func set_astar_path() ->void:
 	var choosed_pos = target_pos
+	if !city_comp.astar.is_in_bounds(choosed_pos.x, choosed_pos.y):
+		return
 	if city_comp.astar.is_point_solid(target_pos):
 		adyacent_target_pos =  choose_adjacent(target_pos)
 		choosed_pos = adyacent_target_pos
@@ -77,6 +79,8 @@ func take_damage(damage_amount : int) -> void:
 	health -= damage_amount
 	if health==0:
 		die()
+	if !is_inside_tree():
+		return
 	await get_tree().create_timer(0.33).timeout
 	modulate = Color.WHITE
 
@@ -88,6 +92,8 @@ func attack(delta : float) -> void:
 			attack_cooldown+=delta
 			return
 		attack_cooldown=0
+		if !is_instance_valid(target):
+			return
 		target.take_damage(attack_damage)
 		print(target, " ahora tiene ", str(target.health))
 		return

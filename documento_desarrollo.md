@@ -243,9 +243,11 @@
 
 ## Crear entidad pared
 
-- Añadirla a city_comp.living_entities
+- [x] Añadirla a city_comp.living_entities
 
-- Darle script que hereda de entidad (En el futuro, con componentes, no tendrá todos los métodos de entidad que no usa)
+- [x] Darle script que hereda de entidad (En el futuro, con componentes, no tendrá todos los métodos de entidad que no usa)
+
+- Script wall creado. Ha habido que hacer ajustes y asignarle elements map y city comp al crearlo. También asignr el tipo de entidad (cuando se hacía en ready se hacia después de comprobarse y daba problemas/ o quizás otro bug)
 
 ## Melee_attack/Combat_system(en human.gd)
 
@@ -260,6 +262,8 @@
 - [x] Crear metodos take_damage en entity.gd
 
 - [x] Crear metodos atacar, cuando el estado es atacar. Atacar-> Si esta adyacente ataca, si no se mueve. Si ya no existe objetivo, resetear target.
+
+- [x] Crear trabajo y lógica similar en human.gd. Usar find_nearest_alive para huir y atacar al zombie. En checkjob, si hay un zombie cerca-> huir. Si está activo el trabajo atacar, buscar zombie y atacarle.
 
 ## Ciclo día/Noche (en city_comp)
 
