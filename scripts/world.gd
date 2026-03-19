@@ -14,6 +14,12 @@ var city_comp : CityComponent
 
 var astar = AStarGrid2D.new()
 
+var systems : Array = []
+
+var entities : Array[Entity] = []
+
+var ai_system : AISystem
+
 func _ready() -> void:
 	city_comp = CityComponent.new()
 	city_comp.astar = astar
@@ -37,7 +43,11 @@ func _ready() -> void:
 		spawn_human(Vector2(i*GridUtils.TILE_SIZE, i*GridUtils.TILE_SIZE))
 	
 	spawn_zombie(Vector2(16*GridUtils.TILE_SIZE, 16*GridUtils.TILE_SIZE))
+	
+	ai_system = AISystem.new()
 
+func _process(delta: float) -> void:
+	ai_system.update(delta, entities)
 
 func spawn_human(pos: Vector2) -> void:
 	var cell = elements_map.local_to_map(pos)
@@ -48,13 +58,17 @@ func spawn_human(pos: Vector2) -> void:
 	var human : Entity = human_scene.instantiate()
 	human.add_component(HealthComponent.new())
 	human.add_component(PositionComponent.new())
+	human.add_component(TargetComponent.new())
+	human.add_component(AIComponent.new())
 	human.position = pos
 	human.get_component(PositionComponent).grid_pos = elements_map.local_to_map(pos)
 	add_child(human)
 	human.city_comp = city_comp
+	human.get_component(AIComponent).city_comp = city_comp
 	human.elements_map = elements_map
 	human.entity_type = "human"
 	city_comp.living_entities.set(cell, human)
+	entities.append(human)
 
 func spawn_zombie(pos: Vector2) -> void:
 	var cell = elements_map.local_to_map(pos)

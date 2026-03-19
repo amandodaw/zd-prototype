@@ -38,8 +38,8 @@ var check_job_timer : float = 2.0
 
 
 func _process(delta: float) -> void:
-	check_job(delta)
-	match current_job:
+	#check_job(delta)
+	match get_component(AIComponent).current_job:
 		city_comp.Tasks.BUILD:
 			build(delta)
 		city_comp.Tasks.MAKE:
@@ -53,34 +53,34 @@ func _process(delta: float) -> void:
 # JOB SYSTEM
 # ------------------------------------------------
 
-func check_job(delta : float):
-
-	if  check_job_count >= check_job_timer:
-		check_job_count = 0
-		if current_job != city_comp.Tasks.IDLE and city_comp.tasks[current_job]:
-			return
-		if city_comp.tasks[city_comp.Tasks.BUILD] and !city_comp.build_orders.is_empty():
-			if take_build_action():
-				current_job = city_comp.Tasks.BUILD
-				return
-		if city_comp.tasks[city_comp.Tasks.MAKE] and !city_comp.make_orders.is_empty():
-			if take_make_action():
-				current_job = city_comp.Tasks.MAKE
-				return
-		if city_comp.tasks[city_comp.Tasks.GATHER_RESOURCES]:
-			current_job = city_comp.Tasks.GATHER_RESOURCES
-			return
-
-		reset_job()
-		return
-
-	check_job_count += delta
-
-func reset_job() ->void:
-	release_target()
-	target_pos = GridUtils.INVALID
-	current_job = city_comp.Tasks.IDLE
-	path.clear()
+#func check_job(delta : float):
+#
+	#if  check_job_count >= check_job_timer:
+		#check_job_count = 0
+		#if current_job != city_comp.Tasks.IDLE and city_comp.tasks[current_job]:
+			#return
+		#if city_comp.tasks[city_comp.Tasks.BUILD] and !city_comp.build_orders.is_empty():
+			#if take_build_action():
+				#current_job = city_comp.Tasks.BUILD
+				#return
+		#if city_comp.tasks[city_comp.Tasks.MAKE] and !city_comp.make_orders.is_empty():
+			#if take_make_action():
+				#current_job = city_comp.Tasks.MAKE
+				#return
+		#if city_comp.tasks[city_comp.Tasks.GATHER_RESOURCES]:
+			#current_job = city_comp.Tasks.GATHER_RESOURCES
+			#return
+#
+		#reset_job()
+		#return
+#
+	#check_job_count += delta
+#
+#func reset_job() ->void:
+	#release_target()
+	#target_pos = GridUtils.INVALID
+	#current_job = city_comp.Tasks.IDLE
+	#path.clear()
 
 # ------------------------------------------------
 # GATHER
@@ -88,15 +88,10 @@ func reset_job() ->void:
 
 func gather(delta: float) ->void:
 
-	if target_pos != GridUtils.INVALID and !city_comp.entities.has(target_pos):
-		reset_job()
-		return
-
 	if target_pos == GridUtils.INVALID:
 		target_pos = find_nearest("wood")
 		if target_pos == GridUtils.INVALID or target_pos in city_comp.reserved_tiles:
 			print("no wood to take")
-			reset_job()
 			return
 		reserve_target()
 		set_astar_path()
@@ -106,7 +101,6 @@ func gather(delta: float) ->void:
 		city_comp.entities.erase(target_pos)
 		city_comp.astar.set_point_solid(target_pos, false)
 		city_comp.wood_amount += 5
-		reset_job()
 		return
 
 	follow_path(delta)
@@ -123,7 +117,6 @@ func build(delta: float) -> void:
 				city_comp.wood_amount += workplace_cost
 			"wall_order":
 				city_comp.wood_amount += wall_cost
-		reset_job()
 		return
 	
 	if get_component(PositionComponent).grid_pos == adyacent_target_pos:
@@ -206,7 +199,6 @@ func place_wall() -> void:
 
 func finish_build():
 	
-	reset_job()
 	build_bar.visible = false
 
 
@@ -218,7 +210,6 @@ func make(delta: float) -> void:
 	
 	if !city_comp.tasks[city_comp.Tasks.MAKE]:
 		city_comp.wood_amount += make_axe_cost
-		reset_job()
 		return
 	
 	if get_component(PositionComponent).grid_pos == target_pos:
