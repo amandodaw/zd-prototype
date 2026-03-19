@@ -6,4 +6,4 @@ func die() -> void:
 	city_comp.astar.set_point_solid(grid_pos, false)
 	city_comp.living_entities.erase(grid_pos)
 	elements_map.erase_cell(grid_pos)
-	super()
+	#super()

@@ -1,6 +1,21 @@
 extends Sprite2D
 class_name Entity
 
+#NUEVA MIERDA
+var componentes := {}
+
+func add_component(component) -> void:
+	componentes[component.get_script()] = component
+
+func get_component(component_script):
+	return componentes.get(component_script, null)
+
+func remove_component(component) ->void:
+	componentes.erase(component)
+
+func has_component(component) ->bool:
+	return componentes.has(component)
+
 const INVALID := Vector2i(-1,-1)
 
 var grid_pos : Vector2i = Vector2i.ZERO
@@ -18,7 +33,6 @@ var entity_type : String
 var path : Array[Vector2i]
 var path_index = 0
 
-var health : int = 3
 var attack_speed : float = 3.0
 var attack_damage : int = 1
 var attack_cooldown : float = 0.0
@@ -74,16 +88,6 @@ func move_to_path_point():
 # COMBAT
 # ------------------------------------------------
 
-func take_damage(damage_amount : int) -> void:
-	modulate = Color.RED
-	health -= damage_amount
-	if health==0:
-		die()
-	if !is_inside_tree():
-		return
-	await get_tree().create_timer(0.33).timeout
-	modulate = Color.WHITE
-
 func attack(delta : float) -> void:
 	if target!=null:
 		target_pos = target.grid_pos
@@ -94,8 +98,8 @@ func attack(delta : float) -> void:
 		attack_cooldown=0
 		if !is_instance_valid(target):
 			return
-		target.take_damage(attack_damage)
-		print(target, " ahora tiene ", str(target.health))
+		target.get_component(HealthComponent).take_damage(attack_damage)
+		print(target, " ahora tiene ", str(target.get_component(HealthComponent).health))
 		return
 	set_astar_path()
 	follow_path(delta)
@@ -103,10 +107,6 @@ func attack(delta : float) -> void:
 # ------------------------------------------------
 # UTILS
 # ------------------------------------------------
-
-func die() -> void:
-	release_target()
-	queue_free()
 
 func find_nearest(type:String) -> Vector2i:
 

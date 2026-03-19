@@ -3,6 +3,7 @@ class_name World
 
 var human_scene = preload("res://scenes/human.tscn")
 var zombie_scene = preload("res://scenes/zombie.tscn")
+var entity_scene = preload("res://scenes/entity.tscn")
 
 @onready var map : Node2D = $Map
 @onready var elements_map : TileMapLayer = $Map/ElementsLayer
@@ -44,7 +45,8 @@ func spawn_human(pos: Vector2) -> void:
 	if cell in city_comp.entities:
 		print("ESPACIO OCUPADO. HUMANO NO SPAWNEADO EN: ", pos)
 		return
-	var human = human_scene.instantiate()
+	var human : Entity = human_scene.instantiate()
+	human.add_component(HealthComponent.new())
 	human.position = pos
 	human.grid_pos = elements_map.local_to_map(pos)
 	add_child(human)
@@ -59,7 +61,8 @@ func spawn_zombie(pos: Vector2) -> void:
 	if cell in city_comp.entities:
 		print("ESPACIO OCUPADO. HUMANO NO SPAWNEADO EN: ", pos)
 		return
-	var zombie = zombie_scene.instantiate()
+	var zombie : Entity = zombie_scene.instantiate()
+	zombie.add_component(HealthComponent.new())
 	zombie.position = pos
 	zombie.grid_pos = elements_map.local_to_map(pos)
 	add_child(zombie)
