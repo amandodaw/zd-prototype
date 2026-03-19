@@ -19,12 +19,12 @@ func _process(delta: float) -> void:
 
 func find_human() ->bool:
 	target_pos = find_nearest_alive("human")
-	if target_pos == INVALID:
+	if target_pos == GridUtils.INVALID:
 		print("no human found")
 		return false
 	
 	if check_target_in_range(10):
-		print("human in range", grid_pos, target_pos)
+		print("human in range", get_component(PositionComponent).grid_pos, target_pos)
 		target = city_comp.living_entities[target_pos]
 		return true
 	
@@ -37,7 +37,7 @@ func choose_target() -> void:
 		return
 	target_pos = find_nearest_alive("wall")
 	print("pared encontrada :", target_pos)
-	if target_pos == INVALID:
+	if target_pos == GridUtils.INVALID:
 		print("no human or wall to attack")
 		return
 	if !city_comp.living_entities.has(target_pos):

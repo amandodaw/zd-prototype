@@ -47,8 +47,9 @@ func spawn_human(pos: Vector2) -> void:
 		return
 	var human : Entity = human_scene.instantiate()
 	human.add_component(HealthComponent.new())
+	human.add_component(PositionComponent.new())
 	human.position = pos
-	human.grid_pos = elements_map.local_to_map(pos)
+	human.get_component(PositionComponent).grid_pos = elements_map.local_to_map(pos)
 	add_child(human)
 	human.city_comp = city_comp
 	human.elements_map = elements_map
@@ -63,8 +64,9 @@ func spawn_zombie(pos: Vector2) -> void:
 		return
 	var zombie : Entity = zombie_scene.instantiate()
 	zombie.add_component(HealthComponent.new())
+	zombie.add_component(PositionComponent.new())
 	zombie.position = pos
-	zombie.grid_pos = elements_map.local_to_map(pos)
+	zombie.get_component(PositionComponent).grid_pos = elements_map.local_to_map(pos)
 	add_child(zombie)
 	zombie.city_comp = city_comp
 	zombie.elements_map = elements_map

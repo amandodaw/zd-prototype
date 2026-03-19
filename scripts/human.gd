@@ -78,7 +78,7 @@ func check_job(delta : float):
 
 func reset_job() ->void:
 	release_target()
-	target_pos = INVALID
+	target_pos = GridUtils.INVALID
 	current_job = city_comp.Tasks.IDLE
 	path.clear()
 
@@ -88,20 +88,20 @@ func reset_job() ->void:
 
 func gather(delta: float) ->void:
 
-	if target_pos != INVALID and !city_comp.entities.has(target_pos):
+	if target_pos != GridUtils.INVALID and !city_comp.entities.has(target_pos):
 		reset_job()
 		return
 
-	if target_pos == INVALID:
+	if target_pos == GridUtils.INVALID:
 		target_pos = find_nearest("wood")
-		if target_pos == INVALID or target_pos in city_comp.reserved_tiles:
+		if target_pos == GridUtils.INVALID or target_pos in city_comp.reserved_tiles:
 			print("no wood to take")
 			reset_job()
 			return
 		reserve_target()
 		set_astar_path()
 
-	if grid_pos == adyacent_target_pos:
+	if get_component(PositionComponent).grid_pos == adyacent_target_pos:
 		elements_map.erase_cell(target_pos)
 		city_comp.entities.erase(target_pos)
 		city_comp.astar.set_point_solid(target_pos, false)
@@ -126,7 +126,7 @@ func build(delta: float) -> void:
 		reset_job()
 		return
 	
-	if grid_pos == adyacent_target_pos:
+	if get_component(PositionComponent).grid_pos == adyacent_target_pos:
 		
 		build_bar.visible = true
 		
@@ -221,7 +221,7 @@ func make(delta: float) -> void:
 		reset_job()
 		return
 	
-	if grid_pos == target_pos:
+	if get_component(PositionComponent).grid_pos == target_pos:
 		
 		build_bar.visible = true
 
@@ -244,7 +244,7 @@ func take_make_action() -> bool:
 				print("not enough wood")
 				return false
 			target_pos = find_nearest("workplace")
-			if target_pos == INVALID:
+			if target_pos == GridUtils.INVALID:
 				print("no workplace available")
 				return false
 			city_comp.make_orders.erase(make_order)

@@ -17,12 +17,8 @@ func has_component(component) ->bool:
 	return componentes.has(component)
 
 # FIN MIERDA NUEVA
-
-const INVALID := Vector2i(-1,-1)
-
-var grid_pos : Vector2i = Vector2i.ZERO
-var target_pos : Vector2i = INVALID
-var adyacent_target_pos : Vector2i = INVALID
+var target_pos : Vector2i = GridUtils.INVALID
+var adyacent_target_pos : Vector2i = GridUtils.INVALID
 
 var speed := 0.1
 var speed_cont := 0.0
@@ -52,18 +48,18 @@ func set_astar_path() ->void:
 	if city_comp.astar.is_point_solid(target_pos):
 		adyacent_target_pos =  choose_adjacent(target_pos)
 		choosed_pos = adyacent_target_pos
-	if choosed_pos == INVALID:
+	if choosed_pos == GridUtils.INVALID:
 		print("no path to take")
 		return
 	
-	path = city_comp.astar.get_id_path(grid_pos, choosed_pos)
+	path = city_comp.astar.get_id_path(get_component(PositionComponent).grid_pos, choosed_pos)
 
 func follow_path(delta : float) ->void:
 	if path.is_empty():
 		return
 	if speed_cont>=speed:
 		speed_cont=0
-		if grid_pos==path[0]: 
+		if get_component(PositionComponent).grid_pos==path[0]: 
 			path.pop_at(0)
 		move_to_path_point()
 		return 
@@ -78,12 +74,12 @@ func follow_path(delta : float) ->void:
 func move_to_path_point():
 	if path.is_empty():
 		return
-	city_comp.living_entities.erase(grid_pos)
+	city_comp.living_entities.erase(get_component(PositionComponent).grid_pos)
 	
-	grid_pos = path[0]
-	position = grid_pos*GridUtils.TILE_SIZE
+	get_component(PositionComponent).grid_pos = path[0]
+	position = get_component(PositionComponent).grid_pos*GridUtils.TILE_SIZE
 	
-	city_comp.living_entities.set(grid_pos, self)
+	city_comp.living_entities.set(get_component(PositionComponent).grid_pos, self)
 	
 
 # ------------------------------------------------
@@ -92,8 +88,8 @@ func move_to_path_point():
 
 func attack(delta : float) -> void:
 	if target!=null:
-		target_pos = target.grid_pos
-	if is_adjacent(grid_pos, target_pos):
+		target_pos = target.get_component(PositionComponent).grid_pos
+	if is_adjacent(get_component(PositionComponent).grid_pos, target_pos):
 		if attack_cooldown<attack_speed:
 			attack_cooldown+=delta
 			return
@@ -112,7 +108,7 @@ func attack(delta : float) -> void:
 
 func find_nearest(type:String) -> Vector2i:
 
-	var best := INVALID
+	var best := GridUtils.INVALID
 	var best_dist := 999999
 
 	for tile in city_comp.entities:
@@ -123,7 +119,7 @@ func find_nearest(type:String) -> Vector2i:
 		if tile in city_comp.reserved_tiles:
 			continue
 
-		var dist = abs(tile.x - grid_pos.x) + abs(tile.y - grid_pos.y)
+		var dist = abs(tile.x - get_component(PositionComponent).grid_pos.x) + abs(tile.y - get_component(PositionComponent).grid_pos.y)
 
 		if dist < best_dist:
 			best_dist = dist
@@ -133,13 +129,13 @@ func find_nearest(type:String) -> Vector2i:
 
 func find_nearest_alive(type:String) -> Vector2i:
 
-	var best := INVALID
+	var best := GridUtils.INVALID
 	var best_dist := 999999
 	
 	for tile in city_comp.living_entities.keys():
 		if !is_instance_valid(city_comp.living_entities[tile]) or city_comp.living_entities[tile].entity_type != type:
 			continue
-		var dist = abs(tile.x - grid_pos.x) + abs(tile.y - grid_pos.y)
+		var dist = abs(tile.x - get_component(PositionComponent).grid_pos.x) + abs(tile.y - get_component(PositionComponent).grid_pos.y)
 
 		if dist < best_dist:
 			best_dist = dist
@@ -153,7 +149,7 @@ func is_adjacent(a: Vector2i, b: Vector2i) -> bool:
 	return max(dx, dy) == 1
 
 func choose_adjacent(target: Vector2i) -> Vector2i:
-	var best_pos = INVALID
+	var best_pos = GridUtils.INVALID
 	var best_dist = INF
 	
 	var directions = [
@@ -171,7 +167,7 @@ func choose_adjacent(target: Vector2i) -> Vector2i:
 			continue
 		
 		# distancia desde el humano
-		var dist = abs(candidate.x - grid_pos.x) + abs(candidate.y - grid_pos.y)
+		var dist = abs(candidate.x - get_component(PositionComponent).grid_pos.x) + abs(candidate.y - get_component(PositionComponent).grid_pos.y)
 		
 		if dist < best_dist:
 			best_dist = dist
@@ -187,7 +183,7 @@ func is_cell_walkable(cell: Vector2i) -> bool:
 	return true
 
 func check_target_in_range(range : int) -> bool:
-	if abs(target_pos.x - grid_pos.x) + abs(target_pos.y - grid_pos.y) <= range:
+	if abs(target_pos.x - get_component(PositionComponent).grid_pos.x) + abs(target_pos.y - get_component(PositionComponent).grid_pos.y) <= range:
 		return true
 	return false
 

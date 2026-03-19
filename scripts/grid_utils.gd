@@ -4,6 +4,8 @@ const TILE_SIZE : int = 16
 
 const grid_offset : Vector2i = Vector2i(TILE_SIZE/2, TILE_SIZE/2)
 
+const INVALID := Vector2i(-1,-1)
+
 enum direction {
 	UP,
 	DOWN,
