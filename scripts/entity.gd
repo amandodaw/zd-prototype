@@ -16,6 +16,8 @@ func remove_component(component) ->void:
 func has_component(component) ->bool:
 	return componentes.has(component)
 
+# FIN MIERDA NUEVA
+
 const INVALID := Vector2i(-1,-1)
 
 var grid_pos : Vector2i = Vector2i.ZERO

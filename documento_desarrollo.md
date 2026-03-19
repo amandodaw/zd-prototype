@@ -268,3 +268,33 @@
 ## Ciclo día/Noche (en city_comp)
 
 ## DISFRUTAR DEL GAMEPLAY
+
+ # El código se ha vuelto demasiado confuso en su simplicidad. Hora de implementar pequeños sistemas.
+
+ ## Idea principal
+
+Separar toda la funcionalidad enocntrada en zombie y human y más nodos y moverla a sistemas conforme aplique. Por ejemplo: HealthComponent con health y mover ahí los métodos die, take damage etc (demasiado pequeño para un sistema entero). Al añadir componentes, en vez de hacerlo como en el anterior proyecto, hacerlo por nodos. Los componentes son código, pero se asignan usando las ids que proporciona godot por nodo, sin tener que crear un array de entidades adicional. En su lugar, cada entidad puede heredar de entidad.gd, pero tan solo para tener los metodos add_component y remove_component y has_component. Otra alternativa es hacer usando grupos de godot. O que cada componente, en su método ready, se registre en su sistema (para esto haría falta acceso global, pero es bastante eficiente). 
+
+Método a seguir: componentes creados por script. Script Entity.gd del que heredan todos los objetos con metodos para gestionar componentes. Cada entidad tiene un componente, y los componentes tambien están registrados en los sistemas. Los componentes no son nodos.
+
+ ### Primera prueba realizada
+
+Resultado exitoso de la primera prueba. MEtodos para gestionar componentes y diccionario de componentes creado en script entity.gd. En el futuro, solo debería tener eso, y todo lo demás debería haberse movido a un componente o sistema.
+
+Se ha realizado la primera prueba con HealthComponent, quitando funcionalides que deben integrar en otros sistemas como morir. Pero el acceso a los componentes funciona correctamente.
+
+ ### Planteamiento siguientes tareas 
+
+ - Path component, que debería albergar:
+    - Vector por defecto INVALID
+    - Variables target_pos... espera
+    - Demasiado complejo, mejor que tenga las variables que dependen de pathfinding (path, current_path_index)
+ - Target component, que guarda el target y su posición. Crear componente ya que será usado por distintos sistemas (movimiento + planner + ejecutres de accion)
+ - Position component, con grid_pos.
+ - MovementComponent, con
+    - speed y speed_cont
+ - elements_map debería convertirse en un sistema entero que controla la posición del as entidades (map_system o grid_syste)
+ - CityComp está bien, y cuando la ciudad haga cosas deberá tener un sistema también. Sin embargo, la función que cumple ahora CityComp no es ideal, funciona más como un diccionario de datos del mundo, cosa que ya no necesitará cada entidad, si no cada sistema respectivo a sus componentes.
+ - EntityType podria convertirse en un tipo de componente para según que tipo de entidad (HumanComponent, ZombieComponent) o podría vivir en Entity.gd, otra variable más que tendrán todas las entidades con un ENUM con todas por ejemplo.
+ - AttackComponent, que contiene todas las variables de ataque (y los métodos hasta que se migre a un sistema AttackSystem)
+ - Cada vez que se cree un componente y se ajusten sus métodos, agregarlo a las entidades y testear que el juego sigue funcionando (en world, funciones spawn_)
