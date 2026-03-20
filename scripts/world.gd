@@ -20,6 +20,7 @@ var entities : Array[Entity] = []
 
 var ai_system : AISystem
 var target_system : TargetSystem
+var path_system : PathSystem
 
 func _ready() -> void:
 	city_comp = CityComponent.new()
@@ -47,11 +48,14 @@ func _ready() -> void:
 	
 	ai_system = AISystem.new()
 	target_system = TargetSystem.new()
+	path_system = PathSystem.new()
+	path_system.astar = astar
 	
 
 func _process(delta: float) -> void:
 	ai_system.update(delta, entities)
 	target_system.update(delta, entities)
+	path_system.update(delta, entities)
 
 func spawn_human(pos: Vector2) -> void:
 	var cell = elements_map.local_to_map(pos)
@@ -63,6 +67,7 @@ func spawn_human(pos: Vector2) -> void:
 	human.add_component(HealthComponent.new())
 	human.add_component(PositionComponent.new())
 	human.add_component(TargetComponent.new())
+	human.add_component(PathComponent.new())
 	human.add_component(AIComponent.new())
 	human.position = pos
 	human.get_component(PositionComponent).grid_pos = elements_map.local_to_map(pos)
