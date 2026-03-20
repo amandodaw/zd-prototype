@@ -18,7 +18,7 @@ var tasks : Dictionary[int, bool] = {
 	Tasks.IDLE : false
 }
 
-var build_orders : Dictionary[Vector2i, String] = {}
+var build_orders : Dictionary[Vector2i, BuildOrderComponent] = {}
 var reserved_tiles : Dictionary[Vector2i, bool] = {}
 var make_orders : Array[String] = []
 var entities : Dictionary = {}
