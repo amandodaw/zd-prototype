@@ -19,6 +19,7 @@ var systems : Array = []
 var entities : Array[Entity] = []
 
 var ai_system : AISystem
+var target_system : TargetSystem
 
 func _ready() -> void:
 	city_comp = CityComponent.new()
@@ -45,9 +46,12 @@ func _ready() -> void:
 	spawn_zombie(Vector2(16*GridUtils.TILE_SIZE, 16*GridUtils.TILE_SIZE))
 	
 	ai_system = AISystem.new()
+	target_system = TargetSystem.new()
+	
 
 func _process(delta: float) -> void:
 	ai_system.update(delta, entities)
+	target_system.update(delta, entities)
 
 func spawn_human(pos: Vector2) -> void:
 	var cell = elements_map.local_to_map(pos)

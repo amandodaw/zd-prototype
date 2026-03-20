@@ -8,7 +8,6 @@ func check_job(delta : float, entity : Entity):
 
 	var ai_comp : AIComponent = entity.get_component(AIComponent)
 	var city_comp : CityComponent = ai_comp.city_comp
-	print(ai_comp.current_job)
 	if  ai_comp.check_job_count >= ai_comp.check_job_timer:
 		ai_comp.check_job_count = 0
 		if ai_comp.current_job != city_comp.Tasks.IDLE and city_comp.tasks[ai_comp.current_job]:

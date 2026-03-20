@@ -98,14 +98,14 @@ func gather(delta: float) ->void:
 
 func build(delta: float) -> void:
 	var build_order : BuildOrderComponent = city_comp.build_orders.get(get_component(TargetComponent).target_pos)
-	
+
 	if !city_comp.tasks[city_comp.Tasks.BUILD]:
 		city_comp.wood_amount += build_order.cost
 		reset_job()
 		return
 	
 	if get_component(PositionComponent).grid_pos == get_component(TargetComponent).adyacent_target_pos:
-		
+		print("jumanji")
 		build_bar.visible = true
 		
 		build_bar.value = build_order.progress * 10
