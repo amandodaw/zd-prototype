@@ -17,8 +17,6 @@ func has_component(component) ->bool:
 	return componentes.has(component)
 
 # FIN MIERDA NUEVA
-var target_pos : Vector2i = GridUtils.INVALID
-var adyacent_target_pos : Vector2i = GridUtils.INVALID
 
 var speed := 0.1
 var speed_cont := 0.0
@@ -42,12 +40,12 @@ var target : Entity
 # ------------------------------------------------
 
 func set_astar_path() ->void:
-	var choosed_pos = target_pos
+	var choosed_pos = get_component(TargetComponent).target_pos
 	if !city_comp.astar.is_in_bounds(choosed_pos.x, choosed_pos.y):
 		return
-	if city_comp.astar.is_point_solid(target_pos):
-		adyacent_target_pos =  choose_adjacent(target_pos)
-		choosed_pos = adyacent_target_pos
+	if city_comp.astar.is_point_solid(get_component(TargetComponent).target_pos):
+		get_component(TargetComponent).adyacent_target_pos =  choose_adjacent(get_component(TargetComponent).target_pos)
+		choosed_pos = get_component(TargetComponent).adyacent_target_pos
 	if choosed_pos == GridUtils.INVALID:
 		print("no path to take")
 		return
@@ -88,8 +86,8 @@ func move_to_path_point():
 
 func attack(delta : float) -> void:
 	if target!=null:
-		target_pos = target.get_component(PositionComponent).grid_pos
-	if is_adjacent(get_component(PositionComponent).grid_pos, target_pos):
+		get_component(TargetComponent).target_pos = target.get_component(PositionComponent).grid_pos
+	if is_adjacent(get_component(PositionComponent).grid_pos, get_component(TargetComponent).target_pos):
 		if attack_cooldown<attack_speed:
 			attack_cooldown+=delta
 			return
@@ -183,13 +181,13 @@ func is_cell_walkable(cell: Vector2i) -> bool:
 	return true
 
 func check_target_in_range(range : int) -> bool:
-	if abs(target_pos.x - get_component(PositionComponent).grid_pos.x) + abs(target_pos.y - get_component(PositionComponent).grid_pos.y) <= range:
+	if abs(get_component(TargetComponent).target_pos.x - get_component(PositionComponent).grid_pos.x) + abs(get_component(TargetComponent).target_pos.y - get_component(PositionComponent).grid_pos.y) <= range:
 		return true
 	return false
 
 func reserve_target() -> void:
-	city_comp.reserved_tiles.set(target_pos, true)
+	city_comp.reserved_tiles.set(get_component(TargetComponent).target_pos, true)
 
 func release_target() -> void:
-	if target_pos in city_comp.reserved_tiles:
-		city_comp.reserved_tiles.erase(target_pos)
+	if get_component(TargetComponent).target_pos in city_comp.reserved_tiles:
+		city_comp.reserved_tiles.erase(get_component(TargetComponent).target_pos)

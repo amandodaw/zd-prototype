@@ -31,5 +31,10 @@ func reset_job(entity : Entity) ->void:
 	var ai_comp = entity.get_component(AIComponent)
 	var target_comp = entity.get_component(TargetComponent)
 	var city_comp = entity.get_component(CityComponent)
+	release_target(entity)
 	target_comp.target_pos = GridUtils.INVALID
 	ai_comp.current_job = CityComponent.Tasks.IDLE
+
+func release_target(entity : Entity) -> void:
+	if entity.get_component(TargetComponent).target_pos in entity.city_comp.reserved_tiles:
+		entity.city_comp.reserved_tiles.erase(entity.get_component(TargetComponent).target_pos)

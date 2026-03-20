@@ -79,6 +79,7 @@ func spawn_zombie(pos: Vector2) -> void:
 	var zombie : Entity = zombie_scene.instantiate()
 	zombie.add_component(HealthComponent.new())
 	zombie.add_component(PositionComponent.new())
+	zombie.add_component(TargetComponent.new())
 	zombie.position = pos
 	zombie.get_component(PositionComponent).grid_pos = elements_map.local_to_map(pos)
 	add_child(zombie)

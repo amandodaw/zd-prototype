@@ -82,25 +82,37 @@ func _process(delta: float) -> void:
 	#current_job = city_comp.Tasks.IDLE
 	#path.clear()
 
+func reset_job() ->void:
+	release_target()
+	get_component(TargetComponent).target_pos = GridUtils.INVALID
+	current_job = city_comp.Tasks.IDLE
+	path.clear()
+
 # ------------------------------------------------
 # GATHER
 # ------------------------------------------------
 
 func gather(delta: float) ->void:
 
-	if target_pos == GridUtils.INVALID:
-		target_pos = find_nearest("wood")
-		if target_pos == GridUtils.INVALID or target_pos in city_comp.reserved_tiles:
+	if get_component(TargetComponent).target_pos != GridUtils.INVALID and !city_comp.entities.has(get_component(TargetComponent).target_pos):
+		reset_job()
+		return
+
+	if get_component(TargetComponent).target_pos == GridUtils.INVALID:
+		get_component(TargetComponent).target_pos = find_nearest("wood")
+		if get_component(TargetComponent).target_pos == GridUtils.INVALID or get_component(TargetComponent).target_pos in city_comp.reserved_tiles:
 			print("no wood to take")
+			reset_job()
 			return
 		reserve_target()
 		set_astar_path()
 
-	if get_component(PositionComponent).grid_pos == adyacent_target_pos:
-		elements_map.erase_cell(target_pos)
-		city_comp.entities.erase(target_pos)
-		city_comp.astar.set_point_solid(target_pos, false)
+	if get_component(PositionComponent).grid_pos == get_component(TargetComponent).adyacent_target_pos:
+		elements_map.erase_cell(get_component(TargetComponent).target_pos)
+		city_comp.entities.erase(get_component(TargetComponent).target_pos)
+		city_comp.astar.set_point_solid(get_component(TargetComponent).target_pos, false)
 		city_comp.wood_amount += 5
+		reset_job()
 		return
 
 	follow_path(delta)
@@ -112,18 +124,19 @@ func gather(delta: float) ->void:
 func build(delta: float) -> void:
 	
 	if !city_comp.tasks[city_comp.Tasks.BUILD]:
-		match city_comp.build_orders.get(target_pos):
+		match city_comp.build_orders.get(get_component(TargetComponent).target_pos):
 			"workplace_order":
 				city_comp.wood_amount += workplace_cost
 			"wall_order":
 				city_comp.wood_amount += wall_cost
+		reset_job()
 		return
 	
-	if get_component(PositionComponent).grid_pos == adyacent_target_pos:
+	if get_component(PositionComponent).grid_pos == get_component(TargetComponent).adyacent_target_pos:
 		
 		build_bar.visible = true
 		
-		match city_comp.build_orders.get(target_pos):
+		match city_comp.build_orders.get(get_component(TargetComponent).target_pos):
 			"workplace_order":
 				
 				build_bar.value = workplace_build_progress * 10
@@ -131,7 +144,7 @@ func build(delta: float) -> void:
 				if workplace_build_progress >= workplace_build_needed:
 					workplace_build_progress = 0
 					place_workplace()
-					city_comp.build_orders.erase(target_pos)
+					city_comp.build_orders.erase(get_component(TargetComponent).target_pos)
 					finish_build()
 					return
 				workplace_build_progress += delta
@@ -144,7 +157,7 @@ func build(delta: float) -> void:
 				if wall_progress >= wall_needed:
 					wall_progress = 0
 					place_wall()
-					city_comp.build_orders.erase(target_pos)
+					city_comp.build_orders.erase(get_component(TargetComponent).target_pos)
 					finish_build()
 					return
 
@@ -160,8 +173,8 @@ func take_build_action() -> bool:
 				print("not enough wood")
 				return false
 			city_comp.wood_amount -= wall_cost
-			target_pos = build_order
-			adyacent_target_pos = choose_adjacent(build_order)
+			get_component(TargetComponent).target_pos = build_order
+			get_component(TargetComponent).adyacent_target_pos = choose_adjacent(build_order)
 			reserve_target()
 			set_astar_path()
 			return true
@@ -171,7 +184,7 @@ func take_build_action() -> bool:
 
 func place_workplace() -> void:
 	for offset in workplace_form:
-		var target_cell = target_pos + offset
+		var target_cell = get_component(TargetComponent).target_pos + offset
 		var atlas_coords = workplace_origin + offset
 
 		elements_map.set_cell(target_cell, 0, atlas_coords)
@@ -183,7 +196,7 @@ func place_workplace() -> void:
 
 func place_wall() -> void:
 
-	var target_cell = target_pos
+	var target_cell = get_component(TargetComponent).target_pos
 	var atlas_coords = wall_origin
 
 	city_comp.entities.set(target_cell, "wall")
@@ -199,6 +212,7 @@ func place_wall() -> void:
 
 func finish_build():
 	
+	reset_job()
 	build_bar.visible = false
 
 
@@ -210,9 +224,10 @@ func make(delta: float) -> void:
 	
 	if !city_comp.tasks[city_comp.Tasks.MAKE]:
 		city_comp.wood_amount += make_axe_cost
+		reset_job()
 		return
 	
-	if get_component(PositionComponent).grid_pos == target_pos:
+	if get_component(PositionComponent).grid_pos == get_component(TargetComponent).target_pos:
 		
 		build_bar.visible = true
 
@@ -234,8 +249,8 @@ func take_make_action() -> bool:
 			if city_comp.wood_amount < make_axe_cost:
 				print("not enough wood")
 				return false
-			target_pos = find_nearest("workplace")
-			if target_pos == GridUtils.INVALID:
+			get_component(TargetComponent).target_pos = find_nearest("workplace")
+			if get_component(TargetComponent).target_pos == GridUtils.INVALID:
 				print("no workplace available")
 				return false
 			city_comp.make_orders.erase(make_order)
