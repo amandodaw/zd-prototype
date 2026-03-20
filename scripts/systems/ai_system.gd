@@ -8,12 +8,18 @@ func check_job(delta : float, entity : Entity):
 
 	var ai_comp : AIComponent = entity.get_component(AIComponent)
 	var city_comp : CityComponent = ai_comp.city_comp
+	var pos : PositionComponent = entity.get_component(PositionComponent)
+	var tar : TargetComponent = entity.get_component(TargetComponent)
+	var plan : PlanComponent = entity.get_component(PlanComponent)
 	if  ai_comp.check_job_count >= ai_comp.check_job_timer:
 		ai_comp.check_job_count = 0
 		if ai_comp.current_job != city_comp.Tasks.IDLE and city_comp.tasks[ai_comp.current_job]:
 			return
 		if city_comp.tasks[city_comp.Tasks.BUILD] and !city_comp.build_orders.is_empty():
-			ai_comp.current_job = city_comp.Tasks.BUILD
+			plan.plan.clear()
+			plan.plan.append(MoveAction.new())
+			
+			#ai_comp.current_job = city_comp.Tasks.BUILD
 			return
 		if city_comp.tasks[city_comp.Tasks.MAKE] and !city_comp.make_orders.is_empty():
 			ai_comp.current_job = city_comp.Tasks.MAKE
@@ -37,3 +43,8 @@ func reset_job(entity : Entity) ->void:
 func release_target(entity : Entity) -> void:
 	if entity.get_component(TargetComponent).target_pos in entity.city_comp.reserved_tiles:
 		entity.city_comp.reserved_tiles.erase(entity.get_component(TargetComponent).target_pos)
+
+func is_adjacent(a: Vector2i, b: Vector2i) -> bool:
+	var dx = abs(a.x - b.x)
+	var dy = abs(a.y - b.y)
+	return max(dx, dy) == 1

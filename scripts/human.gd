@@ -105,7 +105,6 @@ func build(delta: float) -> void:
 		return
 	
 	if get_component(PositionComponent).grid_pos == get_component(TargetComponent).adyacent_target_pos:
-		print("jumanji")
 		build_bar.visible = true
 		
 		build_bar.value = build_order.progress * 10
