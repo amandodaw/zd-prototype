@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="BuildingData" format=3 uid="uid://dsg2h66ororjn"]
+
+[ext_resource type="Script" uid="uid://coyac3eshrw4j" path="res://scripts/data/building_data.gd" id="1_eqnum"]
+
+[resource]
+script = ExtResource("1_eqnum")
+cost = 9
+origin = Vector2i(0, 4)
+form = Array[Vector2i]([Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0), Vector2i(0, 1), Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1), Vector2i(0, 2), Vector2i(1, 2), Vector2i(2, 2), Vector2i(3, 2)])
+metadata/_custom_type_script = "uid://coyac3eshrw4j"

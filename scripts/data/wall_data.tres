@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="BuildingData" format=3 uid="uid://kl0q7ojeiy16"]
+
+[ext_resource type="Script" uid="uid://coyac3eshrw4j" path="res://scripts/data/building_data.gd" id="1_a17an"]
+
+[resource]
+script = ExtResource("1_a17an")
+cost = 3
+needed = 5.0
+origin = Vector2i(9, 3)
+metadata/_custom_type_script = "uid://coyac3eshrw4j"
