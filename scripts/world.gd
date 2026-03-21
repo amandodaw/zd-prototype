@@ -45,7 +45,7 @@ func _ready() -> void:
 		
 		spawn_human(Vector2(i*GridUtils.TILE_SIZE, i*GridUtils.TILE_SIZE))
 	
-	spawn_zombie(Vector2(16*GridUtils.TILE_SIZE, 16*GridUtils.TILE_SIZE))
+	#spawn_zombie(Vector2(16*GridUtils.TILE_SIZE, 16*GridUtils.TILE_SIZE))
 	
 	ai_system = AISystem.new()
 	target_system = TargetSystem.new()

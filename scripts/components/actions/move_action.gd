@@ -2,37 +2,53 @@ class_name MoveAction
 extends Action
 
 func execute(entity : Entity, delta : float):
-		follow_path(entity, delta)
+	if finished:
+		return
+	follow_path(entity, delta)
 
-func follow_path(entity : Entity, delta : float) ->void:
+func follow_path(entity : Entity, delta : float) -> void:
 	var path_comp = entity.get_component(PathComponent)
 	var move_comp = entity.get_component(MoveComponent)
-	var target_comp = entity.get_component(TargetComponent)
-	print("Target: ", target_comp.target_pos)
-	print("Adyacent: ", target_comp.adyacent_target_pos)
+	var pos_comp = entity.get_component(PositionComponent)
+
 	if path_comp.path.is_empty():
 		finished = true
 		return
-	if move_comp.speed_cont>=move_comp.speed:
-		move_comp.speed_cont=0
-		if entity.get_component(PositionComponent).grid_pos==path_comp.path[0]: 
-			path_comp.path.pop_at(0)
+
+	#saltar nodo actual si coincide
+	if pos_comp.grid_pos == path_comp.path[0]:
+		path_comp.path.pop_at(0)
+		if path_comp.path.is_empty():
+			finished = true
+			return
+
+	if move_comp.speed_cont >= move_comp.speed:
+		move_comp.speed_cont = 0
 		move_to_path_point(entity)
 		return 
+
 	move_comp.speed_cont += delta
 
 func move_to_path_point(entity : Entity):
 	var path_comp = entity.get_component(PathComponent)
+	var pos_comp = entity.get_component(PositionComponent)
 	var ai_comp = entity.get_component(AIComponent)
+
 	if path_comp.path.is_empty():
 		finished = true
 		return
-	ai_comp.city_comp.living_entities.erase(entity.get_component(PositionComponent).grid_pos)
-	
-	entity.get_component(PositionComponent).grid_pos = path_comp.path[0]
-	entity.position = entity.get_component(PositionComponent).grid_pos*GridUtils.TILE_SIZE
-	
-	ai_comp.city_comp.living_entities.set(entity.get_component(PositionComponent).grid_pos, self)
+
+	var next_pos = path_comp.path.pop_at(0)
+
+	ai_comp.city_comp.living_entities.erase(pos_comp.grid_pos)
+
+	pos_comp.grid_pos = next_pos
+	entity.position = next_pos * GridUtils.TILE_SIZE
+
+	ai_comp.city_comp.living_entities.set(next_pos, entity)
+
+	if path_comp.path.is_empty():
+		finished = true
 
 # ------------------------------------------------
 # MOVE

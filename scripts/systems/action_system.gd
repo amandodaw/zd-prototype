@@ -2,7 +2,7 @@ class_name ActionSystem
 
 func update(delta : float, entities: Array[Entity]):
 	for e in entities:
-		var plan_comp = e.get_component(PlanComponent)
+		var plan_comp : PlanComponent = e.get_component(PlanComponent)
 		if not plan_comp:
 			continue
 
@@ -18,5 +18,4 @@ func update(delta : float, entities: Array[Entity]):
 		action.execute(e, delta)
 
 		if action.is_finished():
-			print("terminé de moverme")
 			plan_comp.current_action = null

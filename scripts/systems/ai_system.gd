@@ -16,9 +16,14 @@ func check_job(delta : float, entity : Entity):
 		if ai_comp.current_job != city_comp.Tasks.IDLE and city_comp.tasks[ai_comp.current_job]:
 			return
 		if city_comp.tasks[city_comp.Tasks.BUILD] and !city_comp.build_orders.is_empty():
-			plan.plan.clear()
-			plan.plan.append(MoveAction.new())
-			#ai_comp.current_job = city_comp.Tasks.BUILD
+			ai_comp.current_job = city_comp.Tasks.BUILD
+
+			var has_order = tar.target_pos in city_comp.build_orders.keys()
+
+			if has_order and plan.plan.is_empty() and plan.current_action == null:
+				plan.plan.append(MoveAction.new())
+				plan.plan.append(BuildAction.new())
+
 			return
 		if city_comp.tasks[city_comp.Tasks.MAKE] and !city_comp.make_orders.is_empty():
 			ai_comp.current_job = city_comp.Tasks.MAKE

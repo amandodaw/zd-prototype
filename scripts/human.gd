@@ -62,6 +62,7 @@ func reset_job() ->void:
 	get_component(TargetComponent).target_pos = GridUtils.INVALID
 	current_job = city_comp.Tasks.IDLE
 	path.clear()
+	get_component(PathComponent).path.clear()
 
 # ------------------------------------------------
 # GATHER

@@ -20,11 +20,16 @@ func take_build_action(entity : Entity) -> bool:
 			if city_comp.wood_amount < build_order.cost:
 				print("not enough wood")
 				return false
+			if build_order_pos in city_comp.reserved_tiles:
+				print("orden ya asignada")
+				return false
 			city_comp.wood_amount -= build_order.cost
+
 			entity.get_component(TargetComponent).target_pos = build_order_pos
 			entity.get_component(TargetComponent).adyacent_target_pos = entity.choose_adjacent(build_order_pos)
-			#añadir reserve_target?
-			city_comp.build_orders.erase(build_order_pos)
+			
+			print("posicion del target de construccion: ", entity.get_component(TargetComponent).target_pos)
+			#city_comp.build_orders.erase(build_order_pos)
 			reserve_target(entity)
 			#set_astar_path()
 			return true
