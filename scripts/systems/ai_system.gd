@@ -15,16 +15,18 @@ func check_job(delta : float, entity : Entity):
 		ai_comp.check_job_count = 0
 		if ai_comp.current_job != city_comp.Tasks.IDLE and city_comp.tasks[ai_comp.current_job]:
 			return
-		if city_comp.tasks[city_comp.Tasks.BUILD] and !city_comp.build_orders.is_empty():
-			ai_comp.current_job = city_comp.Tasks.BUILD
+		if city_comp.tasks[city_comp.Tasks.BUILD]:
+			#Si ya tiene build_order y no tiene plan, ejecutarla
+			if has_build_order(entity, city_comp.build_orders):
+				if plan.plan.is_empty():
+					plan.plan.append(MoveAction.new())
+					plan.plan.append(BuildAction.new())
+					return
+			#Si no tiene y hay disponibles, asignar trabajo para calcular en target_system.
+			if is_build_order_available(city_comp.build_orders):
+				ai_comp.current_job = city_comp.Tasks.BUILD
+				return
 
-			var has_order = tar.target_pos in city_comp.build_orders.keys()
-
-			if has_order and plan.plan.is_empty() and plan.current_action == null:
-				plan.plan.append(MoveAction.new())
-				plan.plan.append(BuildAction.new())
-
-			return
 		if city_comp.tasks[city_comp.Tasks.MAKE] and !city_comp.make_orders.is_empty():
 			ai_comp.current_job = city_comp.Tasks.MAKE
 			return
@@ -52,3 +54,15 @@ func is_adjacent(a: Vector2i, b: Vector2i) -> bool:
 	var dx = abs(a.x - b.x)
 	var dy = abs(a.y - b.y)
 	return max(dx, dy) == 1
+
+func is_build_order_available(build_orders: Dictionary) -> bool:
+	for order in build_orders.values():
+		if order.state == BuildOrderComponent.State.FREE:
+			return true
+	return false
+
+func has_build_order(entity: Entity, build_orders: Dictionary) -> bool:
+	var target_comp : TargetComponent = entity.get_component(TargetComponent)
+	if target_comp.target_pos in build_orders.keys():
+		return true
+	return false

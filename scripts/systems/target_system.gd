@@ -15,16 +15,16 @@ func update(delta : float, entities :  Array[Entity]):
 func take_build_action(entity : Entity) -> bool:
 	var city_comp : CityComponent = entity.get_component(AIComponent).city_comp
 	for build_order_pos in city_comp.build_orders.keys():
-		if build_order_pos not in city_comp.reserved_tiles:
-			var build_order : BuildOrderComponent = city_comp.build_orders.get(build_order_pos)
+		var build_order : BuildOrderComponent = city_comp.build_orders.get(build_order_pos)
+		if build_order.state == build_order.State.FREE:
 			if city_comp.wood_amount < build_order.cost:
 				print("not enough wood")
 				return false
-			if build_order_pos in city_comp.reserved_tiles:
-				print("orden ya asignada")
-				return false
 			city_comp.wood_amount -= build_order.cost
-
+			
+			build_order.state = BuildOrderComponent.State.RESERVED
+			build_order.worker = entity
+			
 			entity.get_component(TargetComponent).target_pos = build_order_pos
 			entity.get_component(TargetComponent).adyacent_target_pos = entity.choose_adjacent(build_order_pos)
 			
@@ -36,6 +36,8 @@ func take_build_action(entity : Entity) -> bool:
 			
 	print("no build order to take")
 	return false
+
+
 
 func reserve_target(entity : Entity) -> void:
 	var city_comp = entity.get_component(AIComponent).city_comp
