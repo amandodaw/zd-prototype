@@ -5,7 +5,6 @@ var astar : AStarGrid2D
 func update(delta : float, entities : Array[Entity]):
 	for entity in entities:
 		set_astar_path(entity)
-		print(entity.get_component(PathComponent).path)
 
 # ------------------------------------------------
 # PATH

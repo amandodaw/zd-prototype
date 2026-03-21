@@ -18,7 +18,6 @@ func check_job(delta : float, entity : Entity):
 		if city_comp.tasks[city_comp.Tasks.BUILD] and !city_comp.build_orders.is_empty():
 			plan.plan.clear()
 			plan.plan.append(MoveAction.new())
-			
 			#ai_comp.current_job = city_comp.Tasks.BUILD
 			return
 		if city_comp.tasks[city_comp.Tasks.MAKE] and !city_comp.make_orders.is_empty():
