@@ -25,6 +25,11 @@ func update(delta : float, entities :  Array[Entity]):
 				if plan_comp.current_action == null and target_comp.target_pos == GridUtils.INVALID:
 					target_comp.target_pos = choose_random_adjacent(entity)
 
+			CityComponent.Tasks.ATTACK:
+				if plan_comp.current_action == null and target_comp.target_pos == GridUtils.INVALID:
+					if !choose_attack_target(entity, entities):
+						ai_comp.current_job = CityComponent.Tasks.IDLE
+
 func find_wood(entity : Entity):
 	var city_comp : CityComponent = entity.get_component(AIComponent).city_comp
 	var target_comp : TargetComponent = entity.get_component(TargetComponent)
@@ -166,4 +171,13 @@ func check_target_in_range(entity: Entity, range : int) -> bool:
 	var city_comp = entity.get_component(AIComponent).city_comp
 	if abs(entity.get_component(TargetComponent).target_pos.x - entity.get_component(PositionComponent).grid_pos.x) + abs(entity.get_component(TargetComponent).target_pos.y - entity.get_component(PositionComponent).grid_pos.y) <= range:
 		return true
+	return false
+
+func choose_attack_target(entity: Entity, entities :  Array[Entity]) -> bool:
+	var target_comp : TargetComponent = entity.get_component(TargetComponent)
+	for posible_target in entities:
+		if posible_target.entity_type != entity.entity_type:
+			target_comp.attack_target = posible_target
+			target_comp.target_pos = posible_target.get_component(PositionComponent).grid_pos
+			return true
 	return false

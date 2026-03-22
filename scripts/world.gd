@@ -77,6 +77,7 @@ func spawn_human(pos: Vector2) -> void:
 	human.add_component(AIComponent.new())
 	human.add_component(PlanComponent.new())
 	human.add_component(MoveComponent.new())
+	human.add_component(AttackComponent.new())
 	human.position = pos
 	human.get_component(PositionComponent).grid_pos = elements_map.local_to_map(pos)
 	add_child(human)
@@ -100,6 +101,7 @@ func spawn_zombie(pos: Vector2) -> void:
 	zombie.add_component(AIComponent.new())
 	zombie.add_component(PlanComponent.new())
 	zombie.add_component(MoveComponent.new())
+	zombie.add_component(AttackComponent.new())
 	zombie.position = pos
 	zombie.get_component(PositionComponent).grid_pos = elements_map.local_to_map(pos)
 	add_child(zombie)

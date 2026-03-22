@@ -6,7 +6,7 @@ func update(delta : float, entities :  Array[Entity]):
 			Entity.Entity_type.HUMAN:
 				check_job(delta, entity)
 			Entity.Entity_type.ZOMBIE:
-				find_human(delta, entity)
+				find_human(delta, entity, entities)
 
 func check_job(delta : float, entity : Entity):
 	var ai_comp : AIComponent = entity.get_component(AIComponent)
@@ -66,5 +66,13 @@ func has_build_order(entity: Entity, build_orders: Dictionary) -> bool:
 		return true
 	return false
 
-func find_human(delta : float, entity : Entity) -> void:
-	pass
+func find_human(delta : float, entity : Entity, entities : Array[Entity]) -> void:
+	var ai_comp : AIComponent = entity.get_component(AIComponent)
+	var city_comp : CityComponent = ai_comp.city_comp
+	
+	for posible_target in entities:
+		if posible_target.entity_type == Entity.Entity_type.HUMAN:
+			ai_comp.current_job = CityComponent.Tasks.ATTACK
+			return
+	ai_comp.current_job = CityComponent.Tasks.ATTACK
+	

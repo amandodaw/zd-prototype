@@ -27,3 +27,8 @@ func update(delta : float, entities :  Array[Entity]):
 					plan_comp.plan.append(WaitAction.new())
 					plan_comp.plan.append(MoveAction.new())
 					print("wander action queued")
+
+			CityComponent.Tasks.ATTACK:
+				if plan_comp.current_action == null and plan_comp.plan.is_empty():
+					plan_comp.plan.append(MoveAction.new())
+					plan_comp.plan.append(AttackAction.new())

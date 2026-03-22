@@ -8,7 +8,8 @@ enum Tasks {
 	GATHER_RESOURCES,
 	BUILD,
 	MAKE,
-	IDLE
+	IDLE,
+	ATTACK
 }
 
 var tasks : Dictionary[int, bool] = {
