@@ -46,7 +46,7 @@ func _ready() -> void:
 		
 		spawn_human(Vector2(i*GridUtils.TILE_SIZE, i*GridUtils.TILE_SIZE))
 	
-	#spawn_zombie(Vector2(16*GridUtils.TILE_SIZE, 16*GridUtils.TILE_SIZE))
+	spawn_zombie(Vector2(16*GridUtils.TILE_SIZE, 16*GridUtils.TILE_SIZE))
 	
 	ai_system = AISystem.new()
 	target_system = TargetSystem.new()
@@ -82,7 +82,7 @@ func spawn_human(pos: Vector2) -> void:
 	add_child(human)
 	human.get_component(AIComponent).city_comp = city_comp
 	human.elements_map = elements_map
-	#human.entity_type = "human"
+	human.entity_type = Entity.Entity_type.HUMAN
 	city_comp.living_entities.set(cell, human)
 	entities.append(human)
 
@@ -96,10 +96,15 @@ func spawn_zombie(pos: Vector2) -> void:
 	zombie.add_component(HealthComponent.new())
 	zombie.add_component(PositionComponent.new())
 	zombie.add_component(TargetComponent.new())
+	zombie.add_component(PathComponent.new())
+	zombie.add_component(AIComponent.new())
+	zombie.add_component(PlanComponent.new())
+	zombie.add_component(MoveComponent.new())
 	zombie.position = pos
 	zombie.get_component(PositionComponent).grid_pos = elements_map.local_to_map(pos)
 	add_child(zombie)
-	zombie.city_comp = city_comp
+	zombie.get_component(AIComponent).city_comp = city_comp
 	zombie.elements_map = elements_map
-	zombie.entity_type = "zombie"
+	zombie.entity_type = Entity.Entity_type.ZOMBIE
 	city_comp.living_entities.set(cell, zombie)
+	entities.append(zombie)

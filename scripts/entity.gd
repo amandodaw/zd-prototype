@@ -21,6 +21,12 @@ func has_component(component) ->bool:
 #var speed := 0.1
 #var speed_cont := 0.0
 
+enum Entity_type {
+	HUMAN,
+	ZOMBIE
+}
+var entity_type : Entity_type
+
 var elements_map : TileMapLayer
 #var city_comp : CityComponent
 #

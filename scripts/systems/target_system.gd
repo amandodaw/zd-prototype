@@ -5,17 +5,25 @@ func update(delta : float, entities :  Array[Entity]):
 		var ai_comp : AIComponent = entity.get_component(AIComponent)
 		var target_comp : TargetComponent = entity.get_component(TargetComponent)
 		var plan_comp : PlanComponent = entity.get_component(PlanComponent)
+
 		match ai_comp.current_job:
+
 			CityComponent.Tasks.BUILD:
 				if plan_comp.current_action == null and target_comp.target_pos == GridUtils.INVALID:
 					if !take_build_action(entity):
 						ai_comp.current_job = CityComponent.Tasks.IDLE
+
 			CityComponent.Tasks.MAKE:
 				pass
+
 			CityComponent.Tasks.GATHER_RESOURCES:
 				if plan_comp.current_action == null and target_comp.target_pos == GridUtils.INVALID:
 					if !find_wood(entity):
 						ai_comp.current_job = CityComponent.Tasks.IDLE
+
+			CityComponent.Tasks.IDLE:
+				if plan_comp.current_action == null and target_comp.target_pos == GridUtils.INVALID:
+					target_comp.target_pos = choose_random_adjacent(entity)
 
 func find_wood(entity : Entity):
 	var city_comp : CityComponent = entity.get_component(AIComponent).city_comp
@@ -27,33 +35,25 @@ func find_wood(entity : Entity):
 	target_comp.target_pos = new_target
 	reserve_target(entity)
 	return true
-	
 
 func take_build_action(entity : Entity) -> bool:
 	var city_comp : CityComponent = entity.get_component(AIComponent).city_comp
+	
 	for build_order_pos in city_comp.build_orders.keys():
 		var build_order : BuildOrderComponent = city_comp.build_orders.get(build_order_pos)
+		
 		if build_order.state == BuildOrderComponent.State.FREE:
-			if city_comp.wood_amount < build_order.cost:
-				print("not enough wood")
-				return false
 			city_comp.wood_amount -= build_order.cost
 			
 			build_order.state = BuildOrderComponent.State.RESERVED
 			build_order.worker = entity
-			
 			entity.get_component(TargetComponent).target_pos = build_order_pos
-			#La siguente línea está comentada porque debería hacerla el path realmente
-			#entity.get_component(TargetComponent).adyacent_target_pos = choose_adjacent(entity, build_order_pos)
-			
-			#city_comp.build_orders.erase(build_order_pos)
 			reserve_target(entity)
-			#set_astar_path()
+
 			return true
 			
 	print("no build order to take")
 	return false
-
 
 func reserve_target(entity : Entity) -> void:
 	var city_comp = entity.get_component(AIComponent).city_comp
@@ -130,9 +130,33 @@ func choose_adjacent(entity : Entity, target: Vector2i) -> Vector2i:
 	
 	return best_pos
 
+func choose_random_adjacent(entity: Entity) -> Vector2i:
+	var pos_comp : PositionComponent = entity.get_component(PositionComponent)
+	var valid_cells: Array[Vector2i] = []
+
+	var directions = [
+		Vector2i(0, -1),
+		Vector2i(0, 1),
+		Vector2i(-1, 0),
+		Vector2i(1, 0)
+	]
+
+	for dir in directions:
+		var candidate = pos_comp.grid_pos + dir
+		
+		if is_cell_walkable(entity, candidate):
+			valid_cells.append(candidate)
+
+	if valid_cells.is_empty():
+		return GridUtils.INVALID
+
+	# elegir aleatorio
+	return valid_cells[randi() % valid_cells.size()]
+
 func is_cell_walkable(entity: Entity, cell: Vector2i) -> bool:
 	var city_comp = entity.get_component(AIComponent).city_comp
-	if city_comp.astar.is_point_solid(cell):
+	var astar : AStarGrid2D = city_comp.astar
+	if astar.is_in_bounds(cell.x, cell.y) and city_comp.astar.is_point_solid(cell):
 		return false
 	if cell in city_comp.reserved_tiles:
 		return false

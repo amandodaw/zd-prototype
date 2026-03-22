@@ -2,20 +2,21 @@ class_name AISystem
 
 func update(delta : float, entities :  Array[Entity]):
 	for entity in entities:
-		check_job(delta, entity)
+		match entity.entity_type:
+			Entity.Entity_type.HUMAN:
+				check_job(delta, entity)
+			Entity.Entity_type.ZOMBIE:
+				find_human(delta, entity)
 
 func check_job(delta : float, entity : Entity):
-
 	var ai_comp : AIComponent = entity.get_component(AIComponent)
 	var city_comp : CityComponent = ai_comp.city_comp
-	var pos : PositionComponent = entity.get_component(PositionComponent)
-	var tar : TargetComponent = entity.get_component(TargetComponent)
 	var plan : PlanComponent = entity.get_component(PlanComponent)
 	if  ai_comp.check_job_count >= ai_comp.check_job_timer:
 		ai_comp.check_job_count = 0
 		
 		#if ai_comp.current_job != city_comp.Tasks.IDLE and city_comp.tasks[ai_comp.current_job]:
-		if ai_comp.current_job != CityComponent.Tasks.IDLE and plan.plan.size() > 0:
+		if ai_comp.current_job != CityComponent.Tasks.IDLE:
 			return
 
 		if city_comp.tasks[city_comp.Tasks.BUILD] and !city_comp.build_orders.is_empty():
@@ -64,3 +65,6 @@ func has_build_order(entity: Entity, build_orders: Dictionary) -> bool:
 	if target_comp.target_pos in build_orders.keys():
 		return true
 	return false
+
+func find_human(delta : float, entity : Entity) -> void:
+	pass
