@@ -21,7 +21,7 @@ func check_job(delta : float, entity : Entity):
 		if city_comp.tasks[city_comp.Tasks.BUILD] and !city_comp.build_orders.is_empty():
 			if has_build_order(entity, city_comp.build_orders):
 				return
-			if is_build_order_available(city_comp.build_orders):
+			if is_build_order_available(entity, city_comp.build_orders):
 				plan.plan.clear()
 				ai_comp.current_job = city_comp.Tasks.BUILD
 				return
@@ -51,10 +51,12 @@ func release_target(entity : Entity) -> void:
 	if entity.get_component(TargetComponent).target_pos in city_comp.reserved_tiles:
 		city_comp.reserved_tiles.erase(entity.get_component(TargetComponent).target_pos)
 
-func is_build_order_available(build_orders: Dictionary) -> bool:
+func is_build_order_available(entity : Entity, build_orders: Dictionary) -> bool:
+	var city_comp : CityComponent = entity.get_component(AIComponent).city_comp
 	for order in build_orders.values():
-		if order.state == BuildOrderComponent.State.FREE:
+		if order.state == BuildOrderComponent.State.FREE and city_comp.wood_amount>=order.cost:
 			return true
+		
 	return false
 
 func has_build_order(entity: Entity, build_orders: Dictionary) -> bool:

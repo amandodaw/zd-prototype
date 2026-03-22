@@ -23,8 +23,6 @@ func execute(entity: Entity, delta: float):
 
 	#Si se encuentra en el lugar, construir
 	if GridUtils.is_adjacent(entity.get_component(PositionComponent).grid_pos, entity.get_component(TargetComponent).target_pos):
-		print("Intentando construir en target:", entity.get_component(TargetComponent).target_pos)
-		print("Adyacente target:", entity.get_component(TargetComponent).adyacent_target_pos)
 		build_order.state = BuildOrderComponent.State.IN_PROGRESS
 		entity.build_bar.visible = true
 		entity.build_bar.value = build_order.progress * 10
