@@ -15,13 +15,13 @@ func check_job(delta : float, entity : Entity):
 		ai_comp.check_job_count = 0
 		if ai_comp.current_job != city_comp.Tasks.IDLE and city_comp.tasks[ai_comp.current_job]:
 			return
-		if city_comp.tasks[city_comp.Tasks.BUILD]:
+		if city_comp.tasks[city_comp.Tasks.BUILD] and !city_comp.build_orders.is_empty():
 			#Si ya tiene build_order y no tiene plan, ejecutarla
 			if has_build_order(entity, city_comp.build_orders):
-				if plan.plan.is_empty():
+				if plan.plan.is_empty() and plan.current_action==null:
 					plan.plan.append(MoveAction.new())
 					plan.plan.append(BuildAction.new())
-					return
+				return
 			#Si no tiene y hay disponibles, asignar trabajo para calcular en target_system.
 			if is_build_order_available(city_comp.build_orders):
 				ai_comp.current_job = city_comp.Tasks.BUILD

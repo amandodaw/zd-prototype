@@ -15,12 +15,12 @@ func _process(delta: float) -> void:
 	#check_job(delta)
 	match get_component(AIComponent).current_job:
 		city_comp.Tasks.BUILD:
-			build(delta)
+			pass
 		city_comp.Tasks.MAKE:
 			#make(delta)
 			pass
 		city_comp.Tasks.GATHER_RESOURCES:
-			gather(delta)
+			pass
 		
 
 
@@ -93,44 +93,44 @@ func gather(delta: float) ->void:
 
 	follow_path(delta)
 
-# ------------------------------------------------
-# BUILD
-# ------------------------------------------------
-
-func build(delta: float) -> void:
-	var build_order : BuildOrderComponent = city_comp.build_orders.get(get_component(TargetComponent).target_pos)
-
-	if !city_comp.tasks[city_comp.Tasks.BUILD]:
-		city_comp.wood_amount += build_order.cost
-		reset_job()
-		return
-	
-	if get_component(PositionComponent).grid_pos == get_component(TargetComponent).adyacent_target_pos:
-		build_bar.visible = true
-		
-		build_bar.value = build_order.progress * 10
-
-		if build_order.progress >= build_order.needed:
-			build_order.progress = 0
-			place_building(build_order)
-			city_comp.build_orders.erase(get_component(TargetComponent).target_pos)
-			finish_build()
-			return
-		build_order.progress += delta
-		return
-
-	follow_path(delta)
-
-func place_building(build_order : BuildOrderComponent) -> void:
-	for offset in build_order.form:
-		var target_cell = get_component(TargetComponent).target_pos + offset
-		var atlas_coords = build_order.origin + offset
-
-		elements_map.set_cell(target_cell, 0, atlas_coords)
-		if offset == Vector2i(2, 2):
-			#poner donde van los humanos a crear cosas. donde "ven el workshop"
-			city_comp.entities.set(target_cell, "workplace")
-			city_comp.astar.set_point_solid(target_cell, false)
+## ------------------------------------------------
+## BUILD
+## ------------------------------------------------
+#
+#func build(delta: float) -> void:
+	#var build_order : BuildOrderComponent = city_comp.build_orders.get(get_component(TargetComponent).target_pos)
+#
+	#if !city_comp.tasks[city_comp.Tasks.BUILD]:
+		#city_comp.wood_amount += build_order.cost
+		#reset_job()
+		#return
+	#
+	#if get_component(PositionComponent).grid_pos == get_component(TargetComponent).adyacent_target_pos:
+		#build_bar.visible = true
+		#
+		#build_bar.value = build_order.progress * 10
+#
+		#if build_order.progress >= build_order.needed:
+			#build_order.progress = 0
+			#place_building(build_order)
+			#city_comp.build_orders.erase(get_component(TargetComponent).target_pos)
+			#finish_build()
+			#return
+		#build_order.progress += delta
+		#return
+#
+	#follow_path(delta)
+#
+#func place_building(build_order : BuildOrderComponent) -> void:
+	#for offset in build_order.form:
+		#var target_cell = get_component(TargetComponent).target_pos + offset
+		#var atlas_coords = build_order.origin + offset
+#
+		#elements_map.set_cell(target_cell, 0, atlas_coords)
+		#if offset == Vector2i(2, 2):
+			##poner donde van los humanos a crear cosas. donde "ven el workshop"
+			#city_comp.entities.set(target_cell, "workplace")
+			#city_comp.astar.set_point_solid(target_cell, false)
 
 #func take_build_action() -> bool:
 	#for build_order in city_comp.build_orders.keys():

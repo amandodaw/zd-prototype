@@ -3,12 +3,15 @@ class_name TargetSystem
 func update(delta : float, entities :  Array[Entity]):
 	for entity in entities:
 		var ai_comp : AIComponent = entity.get_component(AIComponent)
+		var target_comp : TargetComponent = entity.get_component(TargetComponent)
+		var plan_comp : PlanComponent = entity.get_component(PlanComponent)
 		match ai_comp.current_job:
 			CityComponent.Tasks.GATHER_RESOURCES:
 				pass
 			CityComponent.Tasks.BUILD:
-				if !take_build_action(entity):
-					ai_comp.current_job = CityComponent.Tasks.IDLE
+				if plan_comp.current_action == null:
+					if !take_build_action(entity):
+						ai_comp.current_job = CityComponent.Tasks.IDLE
 			CityComponent.Tasks.MAKE:
 				pass
 
@@ -16,7 +19,7 @@ func take_build_action(entity : Entity) -> bool:
 	var city_comp : CityComponent = entity.get_component(AIComponent).city_comp
 	for build_order_pos in city_comp.build_orders.keys():
 		var build_order : BuildOrderComponent = city_comp.build_orders.get(build_order_pos)
-		if build_order.state == build_order.State.FREE:
+		if build_order.state == BuildOrderComponent.State.FREE:
 			if city_comp.wood_amount < build_order.cost:
 				print("not enough wood")
 				return false
@@ -28,7 +31,6 @@ func take_build_action(entity : Entity) -> bool:
 			entity.get_component(TargetComponent).target_pos = build_order_pos
 			entity.get_component(TargetComponent).adyacent_target_pos = entity.choose_adjacent(build_order_pos)
 			
-			print("posicion del target de construccion: ", entity.get_component(TargetComponent).target_pos)
 			#city_comp.build_orders.erase(build_order_pos)
 			reserve_target(entity)
 			#set_astar_path()
