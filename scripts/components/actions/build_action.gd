@@ -14,10 +14,13 @@ func execute(entity: Entity, delta: float):
 		stop_building(entity)
 		return
 
+
 	#Si se ha cancelado la tarea de construccion, cancelar
 	if !city_comp.tasks[city_comp.Tasks.BUILD]:
 		cancel_build(entity, build_order)
 		return
+
+
 	#Si se encuentra en el lugar, construir
 	if entity.get_component(PositionComponent).grid_pos == entity.get_component(TargetComponent).adyacent_target_pos:
 		build_order.state = BuildOrderComponent.State.IN_PROGRESS

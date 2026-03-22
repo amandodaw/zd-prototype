@@ -1,6 +1,6 @@
 class_name CityComponent
 
-var wood_amount : int = 0
+var wood_amount : int = 20
 var axe_amount : int = 0
 var buildings : Array
 

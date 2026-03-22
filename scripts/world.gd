@@ -20,6 +20,7 @@ var entities : Array[Entity] = []
 
 var ai_system : AISystem
 var target_system : TargetSystem
+var planner_system : PlannerSystem
 var path_system : PathSystem
 var action_system : ActionSystem
 
@@ -49,6 +50,7 @@ func _ready() -> void:
 	
 	ai_system = AISystem.new()
 	target_system = TargetSystem.new()
+	planner_system = PlannerSystem.new()
 	path_system = PathSystem.new()
 	action_system = ActionSystem.new()
 	path_system.astar = astar
@@ -57,6 +59,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	ai_system.update(delta, entities)
 	target_system.update(delta, entities)
+	planner_system.update(delta, entities)
 	path_system.update(delta, entities)
 	action_system.update(delta, entities)
 
