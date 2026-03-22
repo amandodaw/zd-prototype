@@ -7,14 +7,15 @@ func execute(entity : Entity, delta : float):
 		#return
 	var target_comp : TargetComponent = entity.get_component(TargetComponent)
 	var position_comp : PositionComponent = entity.get_component(PositionComponent)
+	var ai_comp : AIComponent = entity.get_component(AIComponent)
 	var city_comp : CityComponent = entity.get_component(AIComponent).city_comp
 
-	if !city_comp.tasks[city_comp.Tasks.GATHER_RESOURCES]:
+	if !city_comp.tasks[city_comp.Tasks.GATHER_RESOURCES] or ai_comp.current_job!=CityComponent.Tasks.GATHER_RESOURCES:
 		cancel_picking(entity)
 		return
 
 
-	if position_comp.grid_pos == target_comp.adyacent_target_pos:
+	if GridUtils.is_adjacent(position_comp.grid_pos, target_comp.target_pos):
 		entity.elements_map.erase_cell(target_comp.target_pos)
 		city_comp.entities.erase(target_comp.target_pos)
 		city_comp.astar.set_point_solid(target_comp.target_pos, false)
@@ -28,6 +29,7 @@ func stop_picking(entity : Entity):
 	ai_comp.current_job = CityComponent.Tasks.IDLE
 	target_comp.target_pos = GridUtils.INVALID
 	finished = true
+	print("He terminado y mi plan es: ", entity.get_component(PlanComponent).plan)
 
 func cancel_picking(entity : Entity):
 	var target_comp : TargetComponent = entity.get_component(TargetComponent)

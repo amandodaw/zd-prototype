@@ -6,21 +6,21 @@ extends Entity
 #var build_type : String = ""
 #var make_order : int = -1
 
-var current_job : CityComponent.Tasks = CityComponent.Tasks.IDLE
-var check_job_count : float = 0.0
-var check_job_timer : float = 2.0
+#var current_job : CityComponent.Tasks = CityComponent.Tasks.IDLE
+#var check_job_count : float = 0.0
+#var check_job_timer : float = 2.0
 
 
-func _process(delta: float) -> void:
-	#check_job(delta)
-	match get_component(AIComponent).current_job:
-		city_comp.Tasks.BUILD:
-			pass
-		city_comp.Tasks.MAKE:
-			#make(delta)
-			pass
-		city_comp.Tasks.GATHER_RESOURCES:
-			pass
+#func _process(delta: float) -> void:
+	##check_job(delta)
+	#match get_component(AIComponent).current_job:
+		#city_comp.Tasks.BUILD:
+			#pass
+		#city_comp.Tasks.MAKE:
+			##make(delta)
+			#pass
+		#city_comp.Tasks.GATHER_RESOURCES:
+			#pass
 		
 
 
@@ -57,41 +57,41 @@ func _process(delta: float) -> void:
 	#current_job = city_comp.Tasks.IDLE
 	#path.clear()
 
-func reset_job() ->void:
-	release_target()
-	get_component(TargetComponent).target_pos = GridUtils.INVALID
-	current_job = city_comp.Tasks.IDLE
-	path.clear()
-	get_component(PathComponent).path.clear()
+#func reset_job() ->void:
+	#release_target()
+	#get_component(TargetComponent).target_pos = GridUtils.INVALID
+	#current_job = city_comp.Tasks.IDLE
+	#path.clear()
+	#get_component(PathComponent).path.clear()
 
 # ------------------------------------------------
 # GATHER
 # ------------------------------------------------
 
-func gather(delta: float) ->void:
-
-	if get_component(TargetComponent).target_pos != GridUtils.INVALID and !city_comp.entities.has(get_component(TargetComponent).target_pos):
-		reset_job()
-		return
-
-	if get_component(TargetComponent).target_pos == GridUtils.INVALID:
-		get_component(TargetComponent).target_pos = find_nearest("wood")
-		if get_component(TargetComponent).target_pos == GridUtils.INVALID or get_component(TargetComponent).target_pos in city_comp.reserved_tiles:
-			print("no wood to take")
-			reset_job()
-			return
-		reserve_target()
-		set_astar_path()
-
-	if get_component(PositionComponent).grid_pos == get_component(TargetComponent).adyacent_target_pos:
-		elements_map.erase_cell(get_component(TargetComponent).target_pos)
-		city_comp.entities.erase(get_component(TargetComponent).target_pos)
-		city_comp.astar.set_point_solid(get_component(TargetComponent).target_pos, false)
-		city_comp.wood_amount += 5
-		reset_job()
-		return
-
-	follow_path(delta)
+#func gather(delta: float) ->void:
+#
+	#if get_component(TargetComponent).target_pos != GridUtils.INVALID and !city_comp.entities.has(get_component(TargetComponent).target_pos):
+		#reset_job()
+		#return
+#
+	#if get_component(TargetComponent).target_pos == GridUtils.INVALID:
+		#get_component(TargetComponent).target_pos = find_nearest("wood")
+		#if get_component(TargetComponent).target_pos == GridUtils.INVALID or get_component(TargetComponent).target_pos in city_comp.reserved_tiles:
+			#print("no wood to take")
+			#reset_job()
+			#return
+		#reserve_target()
+		#set_astar_path()
+#
+	#if get_component(PositionComponent).grid_pos == get_component(TargetComponent).adyacent_target_pos:
+		#elements_map.erase_cell(get_component(TargetComponent).target_pos)
+		#city_comp.entities.erase(get_component(TargetComponent).target_pos)
+		#city_comp.astar.set_point_solid(get_component(TargetComponent).target_pos, false)
+		#city_comp.wood_amount += 5
+		#reset_job()
+		#return
+#
+	#follow_path(delta)
 
 ## ------------------------------------------------
 ## BUILD
@@ -175,11 +175,11 @@ func gather(delta: float) ->void:
 	#wall.city_comp = city_comp
 	#wall.elements_map = elements_map
 	
-
-func finish_build():
-	
-	reset_job()
-	build_bar.visible = false
+#
+#func finish_build():
+	#
+	#reset_job()
+	#build_bar.visible = false
 
 
 # ------------------------------------------------

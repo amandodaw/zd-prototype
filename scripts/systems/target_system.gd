@@ -7,25 +7,24 @@ func update(delta : float, entities :  Array[Entity]):
 		var plan_comp : PlanComponent = entity.get_component(PlanComponent)
 		match ai_comp.current_job:
 			CityComponent.Tasks.BUILD:
-				if plan_comp.current_action == null:
+				if plan_comp.current_action == null and target_comp.target_pos == GridUtils.INVALID:
 					if !take_build_action(entity):
 						ai_comp.current_job = CityComponent.Tasks.IDLE
 			CityComponent.Tasks.MAKE:
 				pass
 			CityComponent.Tasks.GATHER_RESOURCES:
-				#El siguiente if debería ser también current_action == null como build?
-				if target_comp.target_pos == GridUtils.INVALID:
+				if plan_comp.current_action == null and target_comp.target_pos == GridUtils.INVALID:
 					if !find_wood(entity):
 						ai_comp.current_job = CityComponent.Tasks.IDLE
 
 func find_wood(entity : Entity):
 	var city_comp : CityComponent = entity.get_component(AIComponent).city_comp
 	var target_comp : TargetComponent = entity.get_component(TargetComponent)
-	target_comp.target_pos = find_nearest(entity, "wood")
-	if target_comp.target_pos == GridUtils.INVALID or target_comp.target_pos in city_comp.reserved_tiles:
+	var new_target = find_nearest(entity, "wood")
+	if new_target == GridUtils.INVALID or new_target in city_comp.reserved_tiles:
 		print("could not find wood")
 		return false
-	print("wood encontrada! SI!: ", target_comp.target_pos)
+	target_comp.target_pos = new_target
 	reserve_target(entity)
 	return true
 	
@@ -44,7 +43,8 @@ func take_build_action(entity : Entity) -> bool:
 			build_order.worker = entity
 			
 			entity.get_component(TargetComponent).target_pos = build_order_pos
-			entity.get_component(TargetComponent).adyacent_target_pos = entity.choose_adjacent(build_order_pos)
+			#La siguente línea está comentada porque debería hacerla el path realmente
+			#entity.get_component(TargetComponent).adyacent_target_pos = choose_adjacent(entity, build_order_pos)
 			
 			#city_comp.build_orders.erase(build_order_pos)
 			reserve_target(entity)
@@ -102,11 +102,6 @@ func find_nearest_alive(entity: Entity, type:String) -> Vector2i:
 			best = tile
 
 	return best
-
-func is_adjacent(a: Vector2i, b: Vector2i) -> bool:
-	var dx = abs(a.x - b.x)
-	var dy = abs(a.y - b.y)
-	return max(dx, dy) == 1
 
 func choose_adjacent(entity : Entity, target: Vector2i) -> Vector2i:
 	var best_pos = GridUtils.INVALID

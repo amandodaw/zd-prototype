@@ -14,13 +14,15 @@ func check_job(delta : float, entity : Entity):
 	if  ai_comp.check_job_count >= ai_comp.check_job_timer:
 		ai_comp.check_job_count = 0
 		
-		if ai_comp.current_job != city_comp.Tasks.IDLE and city_comp.tasks[ai_comp.current_job]:
+		#if ai_comp.current_job != city_comp.Tasks.IDLE and city_comp.tasks[ai_comp.current_job]:
+		if ai_comp.current_job != CityComponent.Tasks.IDLE and plan.plan.size() > 0:
 			return
 
 		if city_comp.tasks[city_comp.Tasks.BUILD] and !city_comp.build_orders.is_empty():
 			if has_build_order(entity, city_comp.build_orders):
 				return
 			if is_build_order_available(city_comp.build_orders):
+				plan.plan.clear()
 				ai_comp.current_job = city_comp.Tasks.BUILD
 				return
 
@@ -45,13 +47,9 @@ func reset_job(entity : Entity) ->void:
 	ai_comp.current_job = CityComponent.Tasks.IDLE
 
 func release_target(entity : Entity) -> void:
-	if entity.get_component(TargetComponent).target_pos in entity.city_comp.reserved_tiles:
-		entity.city_comp.reserved_tiles.erase(entity.get_component(TargetComponent).target_pos)
-
-func is_adjacent(a: Vector2i, b: Vector2i) -> bool:
-	var dx = abs(a.x - b.x)
-	var dy = abs(a.y - b.y)
-	return max(dx, dy) == 1
+	var city_comp = entity.get_component(AIComponent).city_comp
+	if entity.get_component(TargetComponent).target_pos in city_comp.reserved_tiles:
+		city_comp.reserved_tiles.erase(entity.get_component(TargetComponent).target_pos)
 
 func is_build_order_available(build_orders: Dictionary) -> bool:
 	for order in build_orders.values():

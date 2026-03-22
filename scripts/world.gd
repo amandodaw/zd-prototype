@@ -80,10 +80,9 @@ func spawn_human(pos: Vector2) -> void:
 	human.position = pos
 	human.get_component(PositionComponent).grid_pos = elements_map.local_to_map(pos)
 	add_child(human)
-	human.city_comp = city_comp
 	human.get_component(AIComponent).city_comp = city_comp
 	human.elements_map = elements_map
-	human.entity_type = "human"
+	#human.entity_type = "human"
 	city_comp.living_entities.set(cell, human)
 	entities.append(human)
 
