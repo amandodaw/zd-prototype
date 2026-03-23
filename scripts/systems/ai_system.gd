@@ -74,5 +74,5 @@ func find_human(delta : float, entity : Entity, entities : Array[Entity]) -> voi
 		if posible_target.entity_type == Entity.Entity_type.HUMAN:
 			ai_comp.current_job = CityComponent.Tasks.ATTACK
 			return
-	ai_comp.current_job = CityComponent.Tasks.ATTACK
+	ai_comp.current_job = CityComponent.Tasks.IDLE
 	

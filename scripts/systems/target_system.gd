@@ -31,7 +31,7 @@ func update(delta : float, entities :  Array[Entity]):
 				if plan_comp.current_action == null and target_comp.target_pos == GridUtils.INVALID:
 					if !choose_attack_target(entity, entities):
 						ai_comp.current_job = CityComponent.Tasks.IDLE
-		
+
 		if old_target!=target_comp.target_pos:
 			path_comp.needs_repath = true
 
