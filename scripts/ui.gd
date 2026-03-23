@@ -7,6 +7,7 @@ extends Control
 @onready var build_button : Button = $BottomPanel/Orders/VBoxContainer/BuildButton
 @onready var make_button : Button = $BottomPanel/Orders/VBoxContainer/MakeButton
 @onready var make_axe_button : Button = $BottomPanel/Orders/VBoxContainer/MakeAxe
+@onready var attack_button : Button = $BottomPanel/Orders/VBoxContainer/AttackButton
 
 var city_comp : CityComponent
 
@@ -102,3 +103,8 @@ func create_task_from_data(data: BuildingData) -> BuildOrderComponent:
 		data.origin,
 		data.form
 	)
+
+
+func _on_attack_button_pressed() -> void:
+	city_comp.tasks[city_comp.Tasks.ATTACK] = !city_comp.tasks[city_comp.Tasks.ATTACK]
+	attack_button.text = "Attack mode: " + str(city_comp.tasks[city_comp.Tasks.ATTACK])

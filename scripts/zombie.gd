@@ -5,7 +5,7 @@ extends Entity
 	#if find_cont<find_threshold:
 		#find_cont += delta
 		#return
-	#find_cont = 0
+	#find_cont = 0W
 	#choose_target()
 #
 #func find_human() ->bool:

@@ -29,6 +29,7 @@ func _ready() -> void:
 	city_comp = CityComponent.new()
 	city_comp.astar = astar
 	map.city_comp = city_comp
+	map.entities = entities
 	map.init_map()
 	
 	var ground_layer : TileMapLayer = map.ground_layer
@@ -39,7 +40,7 @@ func _ready() -> void:
 
 	astar.update()
 
-	map.add_wood(30)
+	map.add_wood_random(30)
 
 	ui.city_comp = city_comp
 	ui.elements_map = elements_map

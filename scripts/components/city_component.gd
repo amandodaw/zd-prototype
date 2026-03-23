@@ -16,7 +16,8 @@ var tasks : Dictionary[int, bool] = {
 	Tasks.GATHER_RESOURCES : false,
 	Tasks.BUILD : false,
 	Tasks.MAKE : false,
-	Tasks.IDLE : false
+	Tasks.IDLE : false,
+	Tasks.ATTACK : false
 }
 
 var build_orders : Dictionary[Vector2i, BuildOrderComponent] = {}

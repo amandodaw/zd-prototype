@@ -2,6 +2,8 @@ class_name PlannerSystem
 
 func update(delta : float, entities :  Array[Entity]):
 	for entity in entities:
+		if !entity.has_component(PlanComponent):
+			continue
 		var ai_comp : AIComponent = entity.get_component(AIComponent)
 		var city_comp : CityComponent = ai_comp.city_comp
 		var pos : PositionComponent = entity.get_component(PositionComponent)

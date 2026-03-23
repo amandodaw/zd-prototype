@@ -4,6 +4,8 @@ var astar : AStarGrid2D
 
 func update(delta : float, entities : Array[Entity]):
 	for entity in entities:
+		if !entity.has_component(PathComponent):
+			continue
 		var path_comp : PathComponent = entity.get_component(PathComponent)
 		if path_comp.needs_repath:
 			set_astar_path(entity)
@@ -15,7 +17,8 @@ func update(delta : float, entities : Array[Entity]):
 func set_astar_path(entity : Entity) ->void:
 	var choosed_pos = entity.get_component(TargetComponent).target_pos
 	var path_comp : PathComponent = entity.get_component(PathComponent)
-	var target_pos : TargetComponent = entity.get_component(TargetComponent)
+	var target_comp : TargetComponent = entity.get_component(TargetComponent)
+	var target : Entity = target_comp.target
 	var pos_comp : PositionComponent = entity.get_component(PositionComponent)
 	#var city_comp = entity.get_component(AIComponent).city_comp
 
@@ -24,9 +27,8 @@ func set_astar_path(entity : Entity) ->void:
 	#Hay que revisar esta condicion. Puede dar problemas con ataques de rango
 	#Ya hecho. Si el target es el mismo que el de la posicion del attack target siempre que no sea null, elegir adyacente.
 	#Cuando haga ranged attack, elegirá otra posición para atacar
-	if astar.is_point_solid(target_pos.target_pos) or (target_pos.attack_target != null and target_pos.target_pos == target_pos.attack_target.get_component(PositionComponent).grid_pos):
-		target_pos.adyacent_target_pos =  choose_adjacent(entity)
-		choosed_pos = target_pos.adyacent_target_pos
+	if astar.is_point_solid(target_comp.target_pos) or (target_comp.target != null and target_comp.target_pos == target_comp.target.get_component(PositionComponent).grid_pos):
+		choosed_pos = choose_adjacent(entity)
 	if choosed_pos == GridUtils.INVALID:
 		print("no path to take")
 		return

@@ -2,6 +2,8 @@ class_name TargetSystem
 
 func update(delta : float, entities :  Array[Entity]):
 	for entity in entities:
+		if !entity.has_component(TargetComponent):
+			continue
 		var ai_comp : AIComponent = entity.get_component(AIComponent)
 		var target_comp : TargetComponent = entity.get_component(TargetComponent)
 		var plan_comp : PlanComponent = entity.get_component(PlanComponent)
@@ -20,7 +22,7 @@ func update(delta : float, entities :  Array[Entity]):
 
 			CityComponent.Tasks.GATHER_RESOURCES:
 				if plan_comp.current_action == null and target_comp.target_pos == GridUtils.INVALID:
-					if !find_wood(entity):
+					if !find_wood(entity, entities):
 						ai_comp.current_job = CityComponent.Tasks.IDLE
 
 			CityComponent.Tasks.IDLE:
@@ -29,21 +31,22 @@ func update(delta : float, entities :  Array[Entity]):
 
 			CityComponent.Tasks.ATTACK:
 				if plan_comp.current_action == null and target_comp.target_pos == GridUtils.INVALID:
-					if !choose_attack_target(entity, entities):
+					if !choose_attack_target(entity, entities, target_comp.target_type):
 						ai_comp.current_job = CityComponent.Tasks.IDLE
 
 		if old_target!=target_comp.target_pos:
 			path_comp.needs_repath = true
 
-func find_wood(entity : Entity):
+func find_wood(entity : Entity, entities :  Array[Entity]):
 	var city_comp : CityComponent = entity.get_component(AIComponent).city_comp
 	var target_comp : TargetComponent = entity.get_component(TargetComponent)
-	var new_target = find_nearest(entity, "wood")
-	if new_target == GridUtils.INVALID or new_target in city_comp.reserved_tiles:
+	var new_target = find_nearest(entity, entities, Entity.Entity_type.RESOURCE)
+	if new_target == null:
 		print("could not find wood")
 		return false
-	target_comp.target_pos = new_target
-	reserve_target(entity)
+	target_comp.target = new_target
+	target_comp.target_pos = new_target.get_component(PositionComponent).grid_pos
+	new_target.get_component(ResourceComponent).reserved = true
 	return true
 
 func take_build_action(entity : Entity) -> bool:
@@ -68,31 +71,32 @@ func take_build_action(entity : Entity) -> bool:
 func reserve_target(entity : Entity) -> void:
 	var city_comp = entity.get_component(AIComponent).city_comp
 	city_comp.reserved_tiles.set(entity.get_component(TargetComponent).target_pos, true)
+	print("TILES RESERVADAS: ", city_comp.reserved_tiles)
 
 func release_target(entity : Entity) -> void:
 	var city_comp = entity.get_component(AIComponent).city_comp
 	if entity.get_component(TargetComponent).target_pos in city_comp.reserved_tiles:
 		city_comp.reserved_tiles.erase(entity.get_component(TargetComponent).target_pos)
+		print("TILES LIBERADAS: ", city_comp.reserved_tiles)
 
-func find_nearest(entity : Entity, type:String) -> Vector2i:
+func find_nearest(entity : Entity, entities :  Array[Entity], target_type : Entity.Entity_type) -> Entity:
 	var city_comp = entity.get_component(AIComponent).city_comp
 
-	var best := GridUtils.INVALID
+	var best : Entity = null
 	var best_dist := 999999
 
-	for tile in city_comp.entities:
-
-		if city_comp.entities[tile] != type:
+	for posible_target in entities:
+		if posible_target.entity_type != target_type:
 			continue
 			
-		if tile in city_comp.reserved_tiles:
+		if target_type == Entity.Entity_type.RESOURCE and posible_target.get_component(ResourceComponent).reserved:
 			continue
 
-		var dist = abs(tile.x - entity.get_component(PositionComponent).grid_pos.x) + abs(tile.y - entity.get_component(PositionComponent).grid_pos.y)
+		var dist = abs(posible_target.get_component(PositionComponent).grid_pos.x - entity.get_component(PositionComponent).grid_pos.x) + abs(posible_target.get_component(PositionComponent).grid_pos.y - entity.get_component(PositionComponent).grid_pos.y)
 
 		if dist < best_dist:
 			best_dist = dist
-			best = tile
+			best = posible_target
 
 	return best
 
@@ -178,11 +182,11 @@ func check_target_in_range(entity: Entity, range : int) -> bool:
 		return true
 	return false
 
-func choose_attack_target(entity: Entity, entities :  Array[Entity]) -> bool:
+func choose_attack_target(entity: Entity, entities :  Array[Entity], target_type : Entity.Entity_type) -> bool:
 	var target_comp : TargetComponent = entity.get_component(TargetComponent)
 	for posible_target in entities:
-		if posible_target.entity_type != entity.entity_type:
-			target_comp.attack_target = posible_target
+		if posible_target.entity_type == target_type:
+			target_comp.target = posible_target
 			target_comp.target_pos = posible_target.get_component(PositionComponent).grid_pos
 			return true
 	return false

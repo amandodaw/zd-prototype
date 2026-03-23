@@ -23,7 +23,8 @@ func has_component(component) ->bool:
 
 enum Entity_type {
 	HUMAN,
-	ZOMBIE
+	ZOMBIE,
+	RESOURCE
 }
 var entity_type : Entity_type
 

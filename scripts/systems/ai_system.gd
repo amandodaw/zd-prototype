@@ -2,13 +2,15 @@ class_name AISystem
 
 func update(delta : float, entities :  Array[Entity]):
 	for entity in entities:
+		if !entity.has_component(AIComponent):
+			continue
 		match entity.entity_type:
 			Entity.Entity_type.HUMAN:
-				check_job(delta, entity)
+				check_job(delta, entity, entities)
 			Entity.Entity_type.ZOMBIE:
-				find_human(delta, entity, entities)
+				check_target(delta, entity, entities, Entity.Entity_type.HUMAN)
 
-func check_job(delta : float, entity : Entity):
+func check_job(delta : float, entity : Entity, entities : Array[Entity]):
 	var ai_comp : AIComponent = entity.get_component(AIComponent)
 	var city_comp : CityComponent = ai_comp.city_comp
 	var plan : PlanComponent = entity.get_component(PlanComponent)
@@ -18,6 +20,10 @@ func check_job(delta : float, entity : Entity):
 		#if ai_comp.current_job != city_comp.Tasks.IDLE and city_comp.tasks[ai_comp.current_job]:
 		if ai_comp.current_job != CityComponent.Tasks.IDLE:
 			return
+
+		if city_comp.tasks[CityComponent.Tasks.ATTACK]:
+			if check_target(delta, entity, entities, Entity.Entity_type.ZOMBIE):
+				return
 
 		if city_comp.tasks[city_comp.Tasks.BUILD] and !city_comp.build_orders.is_empty():
 			if has_build_order(entity, city_comp.build_orders):
@@ -67,13 +73,16 @@ func has_build_order(entity: Entity, build_orders: Dictionary) -> bool:
 		return true
 	return false
 
-func find_human(delta : float, entity : Entity, entities : Array[Entity]) -> void:
+func check_target(delta : float, entity : Entity, entities : Array[Entity], target_type : Entity.Entity_type) -> bool:
+	var target_comp : TargetComponent = entity.get_component(TargetComponent)
 	var ai_comp : AIComponent = entity.get_component(AIComponent)
 	var city_comp : CityComponent = ai_comp.city_comp
 	
 	for posible_target in entities:
-		if posible_target.entity_type == Entity.Entity_type.HUMAN:
+		if posible_target.entity_type == target_type:
 			ai_comp.current_job = CityComponent.Tasks.ATTACK
-			return
+			target_comp.target_type = target_type
+			return true
 	ai_comp.current_job = CityComponent.Tasks.IDLE
+	return false
 	

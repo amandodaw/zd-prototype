@@ -2,6 +2,8 @@ class_name ActionSystem
 
 func update(delta : float, entities: Array[Entity]):
 	for e in entities:
+		if !e.has_component(PlanComponent):
+			continue
 		var plan_comp : PlanComponent = e.get_component(PlanComponent)
 		var target_comp : TargetComponent = e.get_component(TargetComponent)
 		if not plan_comp:
@@ -23,4 +25,4 @@ func update(delta : float, entities: Array[Entity]):
 			if plan_comp.plan.is_empty():
 				print("plan terminado")
 				target_comp.target_pos = GridUtils.INVALID
-				target_comp.attack_target = null
+				target_comp.target = null
