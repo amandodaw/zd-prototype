@@ -4,7 +4,9 @@ var astar : AStarGrid2D
 
 func update(delta : float, entities : Array[Entity]):
 	for entity in entities:
-		set_astar_path(entity)
+		var path_comp : PathComponent = entity.get_component(PathComponent)
+		if path_comp.needs_repath:
+			set_astar_path(entity)
 
 # ------------------------------------------------
 # PATH
@@ -13,17 +15,21 @@ func update(delta : float, entities : Array[Entity]):
 func set_astar_path(entity : Entity) ->void:
 	var choosed_pos = entity.get_component(TargetComponent).target_pos
 	var path_comp : PathComponent = entity.get_component(PathComponent)
+	var target_pos : TargetComponent = entity.get_component(TargetComponent)
+	var pos_comp : PositionComponent = entity.get_component(PositionComponent)
 	#var city_comp = entity.get_component(AIComponent).city_comp
+
 	if !astar.is_in_bounds(choosed_pos.x, choosed_pos.y):
 		return
-	if astar.is_point_solid(entity.get_component(TargetComponent).target_pos):
-		entity.get_component(TargetComponent).adyacent_target_pos =  choose_adjacent(entity)
-		choosed_pos = entity.get_component(TargetComponent).adyacent_target_pos
+	if astar.is_point_solid(target_pos.target_pos):
+		target_pos.adyacent_target_pos =  choose_adjacent(entity)
+		choosed_pos = target_pos.adyacent_target_pos
 	if choosed_pos == GridUtils.INVALID:
 		print("no path to take")
 		return
-	
-	path_comp.path = astar.get_id_path(entity.get_component(PositionComponent).grid_pos, choosed_pos)
+
+	path_comp.path = astar.get_id_path(pos_comp.grid_pos, choosed_pos)
+	path_comp.needs_repath = false
 
 func choose_adjacent(entity : Entity) -> Vector2i:
 	var target : Vector2i = entity.get_component(TargetComponent).target_pos

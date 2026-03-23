@@ -23,6 +23,7 @@ var target_system : TargetSystem
 var planner_system : PlannerSystem
 var path_system : PathSystem
 var action_system : ActionSystem
+var health_system : HealthSystem
 
 func _ready() -> void:
 	city_comp = CityComponent.new()
@@ -53,6 +54,7 @@ func _ready() -> void:
 	planner_system = PlannerSystem.new()
 	path_system = PathSystem.new()
 	action_system = ActionSystem.new()
+	health_system = HealthSystem.new()
 	path_system.astar = astar
 	
 
@@ -62,6 +64,7 @@ func _process(delta: float) -> void:
 	planner_system.update(delta, entities)
 	path_system.update(delta, entities)
 	action_system.update(delta, entities)
+	health_system.update(delta, entities)
 
 func spawn_human(pos: Vector2) -> void:
 	var cell = elements_map.local_to_map(pos)

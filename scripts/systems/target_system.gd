@@ -5,7 +5,9 @@ func update(delta : float, entities :  Array[Entity]):
 		var ai_comp : AIComponent = entity.get_component(AIComponent)
 		var target_comp : TargetComponent = entity.get_component(TargetComponent)
 		var plan_comp : PlanComponent = entity.get_component(PlanComponent)
-
+		var path_comp : PathComponent = entity.get_component(PathComponent)
+		
+		var old_target : Vector2i = target_comp.target_pos
 		match ai_comp.current_job:
 
 			CityComponent.Tasks.BUILD:
@@ -29,6 +31,9 @@ func update(delta : float, entities :  Array[Entity]):
 				if plan_comp.current_action == null and target_comp.target_pos == GridUtils.INVALID:
 					if !choose_attack_target(entity, entities):
 						ai_comp.current_job = CityComponent.Tasks.IDLE
+		
+		if old_target!=target_comp.target_pos:
+			path_comp.needs_repath = true
 
 func find_wood(entity : Entity):
 	var city_comp : CityComponent = entity.get_component(AIComponent).city_comp
