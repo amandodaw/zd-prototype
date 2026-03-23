@@ -22,6 +22,7 @@ func check_job(delta : float, entity : Entity):
 		if city_comp.tasks[city_comp.Tasks.BUILD] and !city_comp.build_orders.is_empty():
 			if has_build_order(entity, city_comp.build_orders):
 				return
+
 			if is_build_order_available(entity, city_comp.build_orders):
 				plan.plan.clear()
 				ai_comp.current_job = city_comp.Tasks.BUILD

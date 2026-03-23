@@ -1,8 +1,5 @@
 extends Entity
 
-var find_cont : float = 0.0
-var find_threshold : float = 2.0
-
 #func _process(delta: float) -> void:
 	#attack(delta)
 	#if find_cont<find_threshold:
