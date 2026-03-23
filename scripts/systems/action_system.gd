@@ -23,3 +23,4 @@ func update(delta : float, entities: Array[Entity]):
 			if plan_comp.plan.is_empty():
 				print("plan terminado")
 				target_comp.target_pos = GridUtils.INVALID
+				target_comp.attack_target = null

@@ -21,7 +21,10 @@ func set_astar_path(entity : Entity) ->void:
 
 	if !astar.is_in_bounds(choosed_pos.x, choosed_pos.y):
 		return
-	if astar.is_point_solid(target_pos.target_pos):
+	#Hay que revisar esta condicion. Puede dar problemas con ataques de rango
+	#Ya hecho. Si el target es el mismo que el de la posicion del attack target siempre que no sea null, elegir adyacente.
+	#Cuando haga ranged attack, elegirá otra posición para atacar
+	if astar.is_point_solid(target_pos.target_pos) or (target_pos.attack_target != null and target_pos.target_pos == target_pos.attack_target.get_component(PositionComponent).grid_pos):
 		target_pos.adyacent_target_pos =  choose_adjacent(entity)
 		choosed_pos = target_pos.adyacent_target_pos
 	if choosed_pos == GridUtils.INVALID:
