@@ -17,8 +17,7 @@ func check_job(delta : float, entity : Entity, entities : Array[Entity]):
 	if  ai_comp.check_job_count >= ai_comp.check_job_timer:
 		ai_comp.check_job_count = 0
 		
-		#if ai_comp.current_job != city_comp.Tasks.IDLE and city_comp.tasks[ai_comp.current_job]:
-		if ai_comp.current_job != CityComponent.Tasks.IDLE:
+		if ai_comp.current_job != city_comp.Tasks.IDLE and city_comp.tasks[ai_comp.current_job]:
 			return
 
 		if city_comp.tasks[CityComponent.Tasks.ATTACK]:
@@ -49,15 +48,9 @@ func check_job(delta : float, entity : Entity, entities : Array[Entity]):
 func reset_job(entity : Entity) ->void:
 	var ai_comp = entity.get_component(AIComponent)
 	var target_comp = entity.get_component(TargetComponent)
-	var city_comp = entity.get_component(CityComponent)
-	release_target(entity)
+
 	target_comp.target_pos = GridUtils.INVALID
 	ai_comp.current_job = CityComponent.Tasks.IDLE
-
-func release_target(entity : Entity) -> void:
-	var city_comp = entity.get_component(AIComponent).city_comp
-	if entity.get_component(TargetComponent).target_pos in city_comp.reserved_tiles:
-		city_comp.reserved_tiles.erase(entity.get_component(TargetComponent).target_pos)
 
 func is_build_order_available(entity : Entity, build_orders: Dictionary) -> bool:
 	var city_comp : CityComponent = entity.get_component(AIComponent).city_comp

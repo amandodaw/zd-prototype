@@ -66,8 +66,6 @@ func choose_adjacent(entity : Entity) -> Vector2i:
 	return best_pos
 
 func is_cell_walkable(cell: Vector2i) -> bool:
-	if astar.is_point_solid(cell):
+	if !astar.is_in_bounds(cell.x, cell.y) or astar.is_point_solid(cell):
 		return false
-	#if cell in city_comp.reserved_tiles:
-		#return false
 	return true

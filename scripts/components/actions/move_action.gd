@@ -6,10 +6,14 @@ func execute(entity : Entity, delta : float):
 		return
 	follow_path(entity, delta)
 
+
 func follow_path(entity : Entity, delta : float) -> void:
 	var path_comp = entity.get_component(PathComponent)
 	var move_comp = entity.get_component(MoveComponent)
 	var pos_comp = entity.get_component(PositionComponent)
+
+	if path_comp.needs_repath:
+		return
 
 	if path_comp.path.is_empty():
 		finished = true
@@ -34,10 +38,6 @@ func move_to_path_point(entity : Entity):
 	var pos_comp = entity.get_component(PositionComponent)
 	var ai_comp = entity.get_component(AIComponent)
 
-	if path_comp.path.is_empty():
-		finished = true
-		return
-
 	var next_pos = path_comp.path.pop_at(0)
 
 	ai_comp.city_comp.living_entities.erase(pos_comp.grid_pos)
@@ -47,8 +47,20 @@ func move_to_path_point(entity : Entity):
 
 	ai_comp.city_comp.living_entities.set(next_pos, entity)
 
-	if path_comp.path.is_empty():
-		finished = true
+func on_cancel(entity : Entity) -> void:
+	var path_comp : PathComponent = entity.get_component(PathComponent)
+	var target_comp : TargetComponent = entity.get_component(TargetComponent)
+	
+	path_comp.path.clear()
+	target_comp.target_pos = GridUtils.INVALID
+
+func on_finished(entity : Entity) -> void:
+	var target_comp : TargetComponent = entity.get_component(TargetComponent)
+	var plan_comp : PlanComponent = entity.get_component(PlanComponent)
+	#if plan_comp.plan.is_empty()
+	print("terminé de moverme")
+	print("target pos: ", target_comp.target_pos)
+	print("mi pos: ", entity.get_component(PositionComponent).grid_pos)
 
 # ------------------------------------------------
 # MOVE

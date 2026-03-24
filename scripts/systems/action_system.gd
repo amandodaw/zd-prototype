@@ -21,6 +21,7 @@ func update(delta : float, entities: Array[Entity]):
 		action.execute(e, delta)
 
 		if action.is_finished():
+			action.on_finished(e)
 			plan_comp.current_action = null
 			if plan_comp.plan.is_empty():
 				print("plan terminado")

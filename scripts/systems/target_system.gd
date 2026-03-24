@@ -9,33 +9,43 @@ func update(delta : float, entities :  Array[Entity]):
 		var plan_comp : PlanComponent = entity.get_component(PlanComponent)
 		var path_comp : PathComponent = entity.get_component(PathComponent)
 		
-		var old_target : Vector2i = target_comp.target_pos
+		var old_target : Entity = target_comp.target
+		var old_target_pos = target_comp.target_pos
+		
 		match ai_comp.current_job:
 
 			CityComponent.Tasks.BUILD:
-				if plan_comp.current_action == null and target_comp.target_pos == GridUtils.INVALID:
+				if target_comp.target == null and target_comp.target_pos == GridUtils.INVALID:
 					if !take_build_action(entity):
 						ai_comp.current_job = CityComponent.Tasks.IDLE
+					else:
+						plan_comp.needs_replan = true
 
 			CityComponent.Tasks.MAKE:
 				pass
 
 			CityComponent.Tasks.GATHER_RESOURCES:
-				if plan_comp.current_action == null and target_comp.target_pos == GridUtils.INVALID:
+				if target_comp.target == null and target_comp.target_pos == GridUtils.INVALID:
 					if !find_wood(entity, entities):
 						ai_comp.current_job = CityComponent.Tasks.IDLE
+					else:
+						plan_comp.needs_replan = true
 
 			CityComponent.Tasks.IDLE:
-				if plan_comp.current_action == null and target_comp.target_pos == GridUtils.INVALID:
+				if target_comp.target_pos == GridUtils.INVALID:
 					target_comp.target_pos = choose_random_adjacent(entity)
+					plan_comp.needs_replan = true
 
 			CityComponent.Tasks.ATTACK:
-				if plan_comp.current_action == null and target_comp.target_pos == GridUtils.INVALID:
+				if target_comp.target == null and target_comp.target_pos == GridUtils.INVALID:
 					if !choose_attack_target(entity, entities, target_comp.target_type):
 						ai_comp.current_job = CityComponent.Tasks.IDLE
+					else:
+						plan_comp.needs_replan = true
+						
+		if old_target != target_comp.target or old_target_pos != target_comp.target_pos:
+			plan_comp.needs_replan = true
 
-		if old_target!=target_comp.target_pos:
-			path_comp.needs_repath = true
 
 func find_wood(entity : Entity, entities :  Array[Entity]):
 	var city_comp : CityComponent = entity.get_component(AIComponent).city_comp
@@ -47,6 +57,8 @@ func find_wood(entity : Entity, entities :  Array[Entity]):
 	target_comp.target = new_target
 	target_comp.target_pos = new_target.get_component(PositionComponent).grid_pos
 	new_target.get_component(ResourceComponent).reserved = true
+	print("HE reservado COGER LA MADERA EN: ", target_comp.target.get_component(PositionComponent).grid_pos)
+	
 	return true
 
 func take_build_action(entity : Entity) -> bool:
@@ -61,23 +73,11 @@ func take_build_action(entity : Entity) -> bool:
 			build_order.state = BuildOrderComponent.State.RESERVED
 			build_order.worker = entity
 			entity.get_component(TargetComponent).target_pos = build_order_pos
-			reserve_target(entity)
 
 			return true
 			
 	print("no build order to take")
 	return false
-
-func reserve_target(entity : Entity) -> void:
-	var city_comp = entity.get_component(AIComponent).city_comp
-	city_comp.reserved_tiles.set(entity.get_component(TargetComponent).target_pos, true)
-	print("TILES RESERVADAS: ", city_comp.reserved_tiles)
-
-func release_target(entity : Entity) -> void:
-	var city_comp = entity.get_component(AIComponent).city_comp
-	if entity.get_component(TargetComponent).target_pos in city_comp.reserved_tiles:
-		city_comp.reserved_tiles.erase(entity.get_component(TargetComponent).target_pos)
-		print("TILES LIBERADAS: ", city_comp.reserved_tiles)
 
 func find_nearest(entity : Entity, entities :  Array[Entity], target_type : Entity.Entity_type) -> Entity:
 	var city_comp = entity.get_component(AIComponent).city_comp
@@ -172,8 +172,7 @@ func is_cell_walkable(entity: Entity, cell: Vector2i) -> bool:
 	var astar : AStarGrid2D = city_comp.astar
 	if astar.is_in_bounds(cell.x, cell.y) and city_comp.astar.is_point_solid(cell):
 		return false
-	if cell in city_comp.reserved_tiles:
-		return false
+
 	return true
 
 func check_target_in_range(entity: Entity, range : int) -> bool:

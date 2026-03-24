@@ -19,6 +19,7 @@ func execute(entity : Entity, delta : float):
 		city_comp.entities.erase(target_comp.target_pos)
 		city_comp.astar.set_point_solid(target_comp.target_pos, false)
 		city_comp.wood_amount += 5
+		print("HE COGIDO LA MADERA EN: ", target_comp.target.get_component(PositionComponent).grid_pos)
 		stop_picking(entity)
 		return
 
@@ -35,4 +36,8 @@ func cancel_picking(entity : Entity):
 	var plan_comp : PlanComponent = entity.get_component(PlanComponent)
 	plan_comp.plan.clear()
 	target_comp.target.get_component(ResourceComponent).reserved = false
+	print("HE CANCELADO COGER LA MADERA EN: ", target_comp.target.get_component(PositionComponent).grid_pos)
 	stop_picking(entity)
+
+func on_cancel(entity : Entity) -> void:
+	cancel_picking(entity)

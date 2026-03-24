@@ -67,3 +67,7 @@ func finish_build(entity: Entity, build_order : BuildOrderComponent) ->void:
 	build_order.state = BuildOrderComponent.State.DONE
 	city_comp.build_orders.erase(entity.get_component(TargetComponent).target_pos)
 	stop_building(entity)
+
+func on_cancel(entity : Entity) -> void:
+	var city_comp = entity.get_component(AIComponent).city_comp
+	cancel_build(entity, city_comp.build_orders.get(entity.get_component(TargetComponent).target_pos))
