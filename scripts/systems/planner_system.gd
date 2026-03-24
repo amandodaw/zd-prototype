@@ -34,7 +34,6 @@ func update(delta : float, entities :  Array[Entity]):
 					new_plan.append(WaitAction.new())
 					new_plan.append(MoveAction.new())
 					set_new_plan(entity, new_plan)
-					print("wander a:", target_comp.target_pos)
 
 			CityComponent.Tasks.ATTACK:
 				if plan_comp.needs_replan:

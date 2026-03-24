@@ -57,10 +57,7 @@ func on_cancel(entity : Entity) -> void:
 func on_finished(entity : Entity) -> void:
 	var target_comp : TargetComponent = entity.get_component(TargetComponent)
 	var plan_comp : PlanComponent = entity.get_component(PlanComponent)
-	#if plan_comp.plan.is_empty()
 	print("terminé de moverme")
-	print("target pos: ", target_comp.target_pos)
-	print("mi pos: ", entity.get_component(PositionComponent).grid_pos)
 
 # ------------------------------------------------
 # MOVE

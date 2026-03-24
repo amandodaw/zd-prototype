@@ -41,7 +41,8 @@ func check_job(delta : float, entity : Entity, entities : Array[Entity]):
 			ai_comp.current_job = city_comp.Tasks.GATHER_RESOURCES
 			return
 
-		reset_job(entity)
+		ai_comp.current_job = CityComponent.Tasks.IDLE
+		#reset_job(entity)
 		return
 	ai_comp.check_job_count += delta
 
