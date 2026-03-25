@@ -11,11 +11,20 @@ func follow_path(entity : Entity, delta : float) -> void:
 	var path_comp = entity.get_component(PathComponent)
 	var move_comp = entity.get_component(MoveComponent)
 	var pos_comp = entity.get_component(PositionComponent)
+	var target_comp = entity.get_component(TargetComponent)
+	var plan_comp: PlanComponent = entity.get_component(PlanComponent)
 
 	if path_comp.needs_repath:
+		plan_comp.needs_replan = true
 		return
 
 	if path_comp.path.is_empty():
+		if !GridUtils.is_adjacent(target_comp.target_pos, pos_comp.grid_pos):
+			print("ya no tengo path...")
+			plan_comp.plan.clear()
+			plan_comp.needs_replan = true
+			plan_comp.current_action = null
+		
 		finished = true
 		return
 
@@ -58,32 +67,6 @@ func on_finished(entity : Entity) -> void:
 	var target_comp : TargetComponent = entity.get_component(TargetComponent)
 	var plan_comp : PlanComponent = entity.get_component(PlanComponent)
 	print("terminé de moverme")
-
-# ------------------------------------------------
-# MOVE
-	#print("me estoy moviendo!")
-	#var path = entity.get_component(PathComponent)
-	#var pos = entity.get_component(PositionComponent)
-	#print("path: ", path.path)
-#
-	#if not path or path.path.is_empty():
-		#finished = true
-		#return
-#
-	#if path.current_index >= path.path.size():
-		#finished = true
-		#return
-#
-	#var next = path.path[path.current_index]
-#
-	#if pos.grid_pos == next:
-		#path.current_index += 1
-		#return
-#
-	#var dir = next - pos.grid_pos
-#
-	#if dir.x != 0:
-		#pos.grid_pos.x += sign(dir.x)
-	#elif dir.y != 0:
-		#pos.grid_pos.y += sign(dir.y)
-# ------------------------------------------------
+	print("Soy: ", entity)
+	print("Mi posición: ", entity.get_component(PositionComponent).grid_pos)
+	print("TAmao plan: ", plan_comp.plan.size())

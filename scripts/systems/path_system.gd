@@ -23,10 +23,9 @@ func set_astar_path(entity : Entity) ->void:
 	#var city_comp = entity.get_component(AIComponent).city_comp
 
 	if !astar.is_in_bounds(choosed_pos.x, choosed_pos.y):
+		fail_path(entity)
 		return
-	#Hay que revisar esta condicion. Puede dar problemas con ataques de rango
-	#Ya hecho. Si el target es el mismo que el de la posicion del attack target siempre que no sea null, elegir adyacente.
-	#Cuando haga ranged attack, elegirá otra posición para atacar
+
 	if astar.is_point_solid(target_comp.target_pos) or (target_comp.target != null and target_comp.target_pos == target_comp.target.get_component(PositionComponent).grid_pos):
 		choosed_pos = choose_adjacent(entity)
 	if choosed_pos == GridUtils.INVALID:
@@ -35,6 +34,9 @@ func set_astar_path(entity : Entity) ->void:
 
 	path_comp.path = astar.get_id_path(pos_comp.grid_pos, choosed_pos)
 	path_comp.needs_repath = false
+	if path_comp.path.is_empty():
+		fail_path(entity)
+		return
 
 func choose_adjacent(entity : Entity) -> Vector2i:
 	var target : Vector2i = entity.get_component(TargetComponent).target_pos
@@ -69,3 +71,11 @@ func is_cell_walkable(cell: Vector2i) -> bool:
 	if !astar.is_in_bounds(cell.x, cell.y) or astar.is_point_solid(cell):
 		return false
 	return true
+
+func fail_path(entity: Entity):
+	var path_comp = entity.get_component(PathComponent)
+	var plan_comp = entity.get_component(PlanComponent)
+
+	path_comp.path.clear()
+	path_comp.needs_repath = false
+	plan_comp.needs_replan = true

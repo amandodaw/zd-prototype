@@ -170,7 +170,7 @@ func choose_random_adjacent(entity: Entity) -> Vector2i:
 func is_cell_walkable(entity: Entity, cell: Vector2i) -> bool:
 	var city_comp = entity.get_component(AIComponent).city_comp
 	var astar : AStarGrid2D = city_comp.astar
-	if astar.is_in_bounds(cell.x, cell.y) and city_comp.astar.is_point_solid(cell):
+	if !astar.is_in_bounds(cell.x, cell.y) or city_comp.astar.is_point_solid(cell):
 		return false
 
 	return true
