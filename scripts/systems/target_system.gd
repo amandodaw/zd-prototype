@@ -68,6 +68,10 @@ func take_build_action(entity : Entity) -> bool:
 		var build_order : BuildOrderComponent = city_comp.build_orders.get(build_order_pos)
 		
 		if build_order.state == BuildOrderComponent.State.FREE:
+			#Comprobar si hay madera suficiente en la ciudad
+			if city_comp.wood_amount < build_order.cost:
+				continue
+
 			city_comp.wood_amount -= build_order.cost
 			
 			build_order.state = BuildOrderComponent.State.RESERVED
@@ -75,8 +79,8 @@ func take_build_action(entity : Entity) -> bool:
 			entity.get_component(TargetComponent).target_pos = build_order_pos
 
 			return true
-			
-	print("no build order to take")
+	#No hay build orders o no hay suficiente madera para ejecutarlas
+	print("no build order to take/not enough wood")
 	return false
 
 func find_nearest(entity : Entity, entities :  Array[Entity], target_type : Entity.Entity_type) -> Entity:
@@ -100,22 +104,22 @@ func find_nearest(entity : Entity, entities :  Array[Entity], target_type : Enti
 
 	return best
 
-func find_nearest_alive(entity: Entity, type:String) -> Vector2i:
-	var city_comp = entity.get_component(AIComponent).city_comp
-
-	var best := GridUtils.INVALID
-	var best_dist := 999999
-	
-	for tile in city_comp.living_entities.keys():
-		if !is_instance_valid(city_comp.living_entities[tile]) or city_comp.living_entities[tile].entity_type != type:
-			continue
-		var dist = abs(tile.x - entity.get_component(PositionComponent).grid_pos.x) + abs(tile.y - entity.get_component(PositionComponent).grid_pos.y)
-
-		if dist < best_dist:
-			best_dist = dist
-			best = tile
-
-	return best
+#func find_nearest_alive(entity: Entity, type:String) -> Vector2i:
+	#var city_comp = entity.get_component(AIComponent).city_comp
+#
+	#var best := GridUtils.INVALID
+	#var best_dist := 999999
+	#
+	#for tile in city_comp.living_entities.keys():
+		#if !is_instance_valid(city_comp.living_entities[tile]) or city_comp.living_entities[tile].entity_type != type:
+			#continue
+		#var dist = abs(tile.x - entity.get_component(PositionComponent).grid_pos.x) + abs(tile.y - entity.get_component(PositionComponent).grid_pos.y)
+#
+		#if dist < best_dist:
+			#best_dist = dist
+			#best = tile
+#
+	#return best
 
 func choose_adjacent(entity : Entity, target: Vector2i) -> Vector2i:
 	var best_pos = GridUtils.INVALID
@@ -168,11 +172,14 @@ func choose_random_adjacent(entity: Entity) -> Vector2i:
 	return valid_cells[randi() % valid_cells.size()]
 
 func is_cell_walkable(entity: Entity, cell: Vector2i) -> bool:
-	var city_comp = entity.get_component(AIComponent).city_comp
+	var city_comp : CityComponent = entity.get_component(AIComponent).city_comp
 	var astar : AStarGrid2D = city_comp.astar
+	#Comprobar si existe la celda en el mapa de navegación y si es walkable
 	if !astar.is_in_bounds(cell.x, cell.y) or city_comp.astar.is_point_solid(cell):
 		return false
-
+	#Comprobar si hay una entidad en esa celda
+	if cell in city_comp.living_entities.keys():
+		return false
 	return true
 
 func check_target_in_range(entity: Entity, range : int) -> bool:
