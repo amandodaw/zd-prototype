@@ -2,15 +2,12 @@ class_name GatherAction
 extends Action
 
 func execute(entity : Entity, delta : float):
-	#if get_component(TargetComponent).target_pos != GridUtils.INVALID and !city_comp.entities.has(get_component(TargetComponent).target_pos):
-		#reset_job()
-		#return
 	var target_comp : TargetComponent = entity.get_component(TargetComponent)
 	var position_comp : PositionComponent = entity.get_component(PositionComponent)
 	var ai_comp : AIComponent = entity.get_component(AIComponent)
 	var city_comp : CityComponent = entity.get_component(AIComponent).city_comp
 
-	if !city_comp.tasks[city_comp.Tasks.GATHER_RESOURCES] or ai_comp.current_job!=CityComponent.Tasks.GATHER_RESOURCES:
+	if !check_job(entity, city_comp.Tasks.GATHER_RESOURCES) or ai_comp.current_job!=CityComponent.Tasks.GATHER_RESOURCES:
 		cancel_picking(entity)
 		return
 
@@ -24,17 +21,14 @@ func execute(entity : Entity, delta : float):
 		return
 
 func stop_picking(entity : Entity):
-	var target_comp : TargetComponent = entity.get_component(TargetComponent)
-	var ai_comp : AIComponent = entity.get_component(AIComponent)
-	ai_comp.current_job = CityComponent.Tasks.IDLE
-	target_comp.target_pos = GridUtils.INVALID
+	var plan_comp : PlanComponent = entity.get_component(PlanComponent)
+	
+	plan_comp.needs_replan = true
 	finished = true
 
 func cancel_picking(entity : Entity):
 	var target_comp : TargetComponent = entity.get_component(TargetComponent)
-	var city_comp : CityComponent = entity.get_component(AIComponent).city_comp
-	var plan_comp : PlanComponent = entity.get_component(PlanComponent)
-	plan_comp.plan.clear()
+
 	target_comp.target.get_component(ResourceComponent).reserved = false
 	print("HE CANCELADO COGER LA MADERA EN: ", target_comp.target.get_component(PositionComponent).grid_pos)
 	stop_picking(entity)

@@ -16,7 +16,7 @@ func execute(entity: Entity, delta: float):
 
 
 	#Si se ha cancelado la tarea de construccion, cancelar
-	if !city_comp.tasks[city_comp.Tasks.BUILD]:
+	if check_job(entity, CityComponent.Tasks.BUILD):
 		cancel_build(entity, build_order)
 		return
 
@@ -32,8 +32,8 @@ func execute(entity: Entity, delta: float):
 			return
 		build_order.progress += delta
 		return
-	#Si no se encuentra en el lugar, cancelar y reconstonstruir plan en ai?
-	#Se debería hacer automático con finish_build... 
+	else:
+		cancel_build(entity, build_order)
 
 func place_building(entity : Entity, build_order : BuildOrderComponent) -> void:
 	var city_comp = entity.get_component(AIComponent).city_comp
@@ -48,10 +48,11 @@ func place_building(entity : Entity, build_order : BuildOrderComponent) -> void:
 			city_comp.astar.set_point_solid(target_cell, false)
 
 func stop_building(entity: Entity):
-	entity.get_component(AIComponent).current_job = CityComponent.Tasks.IDLE
-	entity.get_component(TargetComponent).target_pos = GridUtils.INVALID
+	var plan_comp : PlanComponent = entity.get_component(PlanComponent)
+	
 	finished = true
 	entity.build_bar.visible = false
+	plan_comp.needs_replan = true
 
 func cancel_build(entity: Entity, build_order : BuildOrderComponent) ->void:
 	var city_comp = entity.get_component(AIComponent).city_comp

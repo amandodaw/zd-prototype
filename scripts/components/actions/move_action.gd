@@ -69,30 +69,29 @@ func move_to_path_point(entity : Entity):
 
 func on_cancel(entity : Entity) -> void:
 	var path_comp : PathComponent = entity.get_component(PathComponent)
-	var target_comp : TargetComponent = entity.get_component(TargetComponent)
 	
 	release_reservation(entity)
 	path_comp.path.clear()
-	target_comp.target_pos = GridUtils.INVALID
 
 func on_finished(entity : Entity) -> void:
 	release_reservation(entity)
 
 func fail(entity: Entity) -> void:
-		var plan_comp : PlanComponent = entity.get_component(PlanComponent)
-		plan_comp.plan.clear()
-		plan_comp.needs_replan = true
-		plan_comp.current_action = null
+	var plan_comp : PlanComponent = entity.get_component(PlanComponent)
+	plan_comp.needs_replan = true
+	release_reservation(entity)
 
 func try_reserve(entity: Entity) -> bool:
 	var city_comp = entity.get_component(AIComponent).city_comp
-	var target_comp = entity.get_component(TargetComponent)
+	var path_comp = entity.get_component(PathComponent)
+	
+	var next_cell = path_comp.path[0]
 
 	# ya reservado por otro
-	if city_comp.reserved_tiles.has(target_comp.target_pos):
+	if city_comp.reserved_tiles.has(next_cell):
 		return false
 
-	city_comp.reserved_tiles[target_comp.target_pos] = entity
+	city_comp.reserved_tiles[next_cell] = entity
 	has_reserved = true
 	return true
 

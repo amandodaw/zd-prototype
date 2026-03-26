@@ -13,3 +13,9 @@ func on_cancel(entity : Entity) -> void:
 
 func on_finished(entity : Entity) -> void:
 	pass
+
+func check_job(entity : Entity, task : CityComponent.Tasks):
+	var city_comp : CityComponent = entity.get_component(AIComponent).city_comp
+	if city_comp.tasks[task]:
+		return true
+	return false
