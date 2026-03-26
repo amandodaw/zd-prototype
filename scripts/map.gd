@@ -6,6 +6,8 @@ extends Node2D
 var ground_tile : Vector2i = Vector2i(1, 0)
 var wood_tile : Vector2i = Vector2i(10, 8)
 
+var entities : Array[Entity]
+
 @onready var city_comp : CityComponent
 
 const height : int = 52
@@ -22,7 +24,8 @@ func create_soil() -> void:
 		for j in range(height):
 			ground_layer.set_cell(Vector2i(i, j), 0, ground_tile)
 
-func add_wood(amount: int) -> void:
+func add_wood_random(amount: int) -> void:
+	var invalid_tiles = get_entity_tiles()
 	for i in range(amount):
 
 		var pos = Vector2i(
@@ -31,14 +34,30 @@ func add_wood(amount: int) -> void:
 		)
 
 		# evitar sobreescribir otra entidad
-		if pos in city_comp.entities:
+		if pos in invalid_tiles:
 			continue
 
-		element_layer.set_cell(pos, 0, wood_tile)
-		city_comp.astar.set_point_solid(pos, true)
-		city_comp.entities[pos] = "wood"
+		add_wood(pos)
+
+func add_wood(pos : Vector2i):
+	var wood := Entity.new()
+	var wood_pos := PositionComponent.new()
+	wood_pos.grid_pos = pos
+	wood.add_component(wood_pos)
+	wood.add_component(ResourceComponent.new())
+	wood.entity_type = Entity.Entity_type.RESOURCE
+	element_layer.set_cell(pos, 0, wood_tile)
+	city_comp.astar.set_point_solid(pos, true)
+	entities.append(wood)
 
 func check_wood() -> void:
-	if not city_comp.entities.values().has("wood") and not city_comp.entities.values().has("reserved"):
-		add_wood(10)
-		
+	for entity in entities:
+		if entity.has_component(ResourceComponent):
+			return
+	add_wood_random(10)
+
+func get_entity_tiles() -> Array[Vector2i]:
+	var entity_tiles : Array[Vector2i] = []
+	for entity in entities:
+		entity_tiles.append(entity.get_component(PositionComponent).grid_pos)
+	return entity_tiles

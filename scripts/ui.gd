@@ -7,6 +7,7 @@ extends Control
 @onready var build_button : Button = $BottomPanel/Orders/VBoxContainer/BuildButton
 @onready var make_button : Button = $BottomPanel/Orders/VBoxContainer/MakeButton
 @onready var make_axe_button : Button = $BottomPanel/Orders/VBoxContainer/MakeAxe
+@onready var attack_button : Button = $BottomPanel/Orders/VBoxContainer/AttackButton
 
 var city_comp : CityComponent
 
@@ -17,7 +18,8 @@ var cont: float = 0.0
 var build_workplace : bool = false
 var build_wall : bool = false
 
-var build_order : Vector2i = Vector2i(11, 7)
+var build_orders : Array[BuildOrderComponent] = []
+var placed_building := Vector2i(11, 7)
 
 
 
@@ -79,8 +81,30 @@ func _on_make_button_pressed() -> void:
 
 func place_build_order(base_cell : Vector2i, order_type : String) -> void:
 	if elements_map.get_cell_source_id(base_cell)==-1:
-		elements_map.set_cell(base_cell, 0, build_order)
-		city_comp.build_orders.set(base_cell, order_type)
-		city_comp.astar.set_point_solid(base_cell, true)
+		var data : BuildingData
+		match order_type:
+			"workplace_order":
+				data = load("res://scripts/data/workplace_data.tres") as BuildingData
+			"wall_order":
+				data = load("res://scripts/data/wall_data.tres") as BuildingData
+		var build_order : BuildOrderComponent = create_task_from_data(data)
+		for offset in build_order.form:
+			var target_cell = offset + base_cell
+			elements_map.set_cell(target_cell, 0, placed_building)
+			city_comp.astar.set_point_solid(target_cell, true)
+		city_comp.build_orders.set(base_cell, build_order)
 	else:
 		print("ubicacion no valida")
+
+func create_task_from_data(data: BuildingData) -> BuildOrderComponent:
+	return BuildOrderComponent.new(
+		data.cost,
+		data.needed,
+		data.origin,
+		data.form
+	)
+
+
+func _on_attack_button_pressed() -> void:
+	city_comp.tasks[city_comp.Tasks.ATTACK] = !city_comp.tasks[city_comp.Tasks.ATTACK]
+	attack_button.text = "Attack mode: " + str(city_comp.tasks[city_comp.Tasks.ATTACK])

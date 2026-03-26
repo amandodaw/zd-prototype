@@ -211,14 +211,106 @@
 
 ## Refactor de Human.gd
 
-- [ ] Reescribir método para elegir que trabajo hacer
+- [x] Reescribir método para elegir que trabajo hacer
 
-- [ ] Reescribir movimiendo usando AStar de godot
+- [x] Reescribir movimiendo usando AStar de godot
 
-- [ ] Reescribir gather con la nueva lógica
+- [x] Reescribir gather con la nueva lógica
+
+# Tareas  hechas 16/03/26
+
+- Sistema de trabajos simple
+
+- Make action va al workplace.
+
+- Build action puede buguearse si se empieza a construir desde un sitio que formará parte del edificio.  También el progreso ocurre dentro de human.gd. En el futuro hay que crear un componente workplace que mantenga el progreso de construcción/creación
+
+- Gather action coge madera en el mapa
+
+- Movimiento ahora funciona con Astar pathfinding de godot
+
+- Creado array de tiles reservados por trabajos en city_comp y eliminadas variables redundantes de human.gd
+
+## Next steps
+
+- Seguir las siguientes implementaciones
+  
+  - Zombies que se mueven hacia una pared o hacia un humano si está en 3 tiles cercanas (HECHO)
+  
+  - Sistema de combate. Estado/trabajo combatir. Se elige un target, se va a su tile adyacente y se le pega con un timer. 3 hp, cada 1 delta un ataque.
+  
+  - Ciclo de día y noche. Por la noche spawnean zombies. 60 segundos dedía, 30 de noche.
+
+## Crear entidad pared
+
+- [x] Añadirla a city_comp.living_entities
+
+- [x] Darle script que hereda de entidad (En el futuro, con componentes, no tendrá todos los métodos de entidad que no usa)
+
+- Script wall creado. Ha habido que hacer ajustes y asignarle elements map y city comp al crearlo. También asignr el tipo de entidad (cuando se hacía en ready se hacia después de comprobarse y daba problemas/ o quizás otro bug)
 
 ## Melee_attack/Combat_system(en human.gd)
+
+- [x] Crear variables health, attack speed y attack damage en entity.gd y asignarlas en ready de cada script
+
+- [x] Como deberia acceder a la variable de la otra entidad? Crear referencia target de tipo ~~Sprite2d~~ Entidad entity.gd y asignarlo al atacar o otra forma
+
+- [x] Crear estado atacar.
+
+- [x] Asignar target a la entidad y haer referencia a su posicion en los metodos.
+
+- [x] Crear metodos take_damage en entity.gd
+
+- [x] Crear metodos atacar, cuando el estado es atacar. Atacar-> Si esta adyacente ataca, si no se mueve. Si ya no existe objetivo, resetear target.
+
+- [x] Crear trabajo y lógica similar en human.gd. Usar find_nearest_alive para huir y atacar al zombie. En checkjob, si hay un zombie cerca-> huir. Si está activo el trabajo atacar, buscar zombie y atacarle.
 
 ## Ciclo día/Noche (en city_comp)
 
 ## DISFRUTAR DEL GAMEPLAY
+
+# El código se ha vuelto demasiado confuso en su simplicidad. Hora de implementar pequeños sistemas.
+
+## Idea principal
+
+Separar toda la funcionalidad enocntrada en zombie y human y más nodos y moverla a sistemas conforme aplique. Por ejemplo: HealthComponent con health y mover ahí los métodos die, take damage etc (demasiado pequeño para un sistema entero). Al añadir componentes, en vez de hacerlo como en el anterior proyecto, hacerlo por nodos. Los componentes son código, pero se asignan usando las ids que proporciona godot por nodo, sin tener que crear un array de entidades adicional. En su lugar, cada entidad puede heredar de entidad.gd, pero tan solo para tener los metodos add_component y remove_component y has_component. Otra alternativa es hacer usando grupos de godot. O que cada componente, en su método ready, se registre en su sistema (para esto haría falta acceso global, pero es bastante eficiente). 
+
+Método a seguir: componentes creados por script. Script Entity.gd del que heredan todos los objetos con metodos para gestionar componentes. Cada entidad tiene un componente, y los componentes tambien están registrados en los sistemas. Los componentes no son nodos.
+
+### Primera prueba realizada
+
+Resultado exitoso de la primera prueba. MEtodos para gestionar componentes y diccionario de componentes creado en script entity.gd. En el futuro, solo debería tener eso, y todo lo demás debería haberse movido a un componente o sistema.
+
+Se ha realizado la primera prueba con HealthComponent, quitando funcionalides que deben integrar en otros sistemas como morir. Pero el acceso a los componentes funciona correctamente.
+
+### Planteamiento siguientes tareas
+
+- Path component, que debería albergar:
+  - Vector por defecto INVALID
+  - Variables target_pos... espera
+  - Demasiado complejo, mejor que tenga las variables que dependen de pathfinding (path, current_path_index)
+- Target component, que guarda el target y su posición. Crear componente ya que será usado por distintos sistemas (movimiento + planner + ejecutres de accion)
+- Position component, con grid_pos.
+- MovementComponent, con
+  - speed y speed_cont
+- elements_map debería convertirse en un sistema entero que controla la posición del as entidades (map_system o grid_syste)
+- CityComp está bien, y cuando la ciudad haga cosas deberá tener un sistema también. Sin embargo, la función que cumple ahora CityComp no es ideal, funciona más como un diccionario de datos del mundo, cosa que ya no necesitará cada entidad, si no cada sistema respectivo a sus componentes.
+- EntityType podria convertirse en un tipo de componente para según que tipo de entidad (HumanComponent, ZombieComponent) o podría vivir en Entity.gd, otra variable más que tendrán todas las entidades con un ENUM con todas por ejemplo.
+- AttackComponent, que contiene todas las variables de ataque (y los métodos hasta que se migre a un sistema AttackSystem)
+- Cada vez que se cree un componente y se ajusten sus métodos, agregarlo a las entidades y testear que el juego sigue funcionando (en world, funciones spawn_)
+
+
+
+# Recuento 24/03/26 - Tareas
+
+- Recrear acción make pensando en los items que se crean como entidades objeto, por ejemplo
+
+- Cuando un humano va hacia un zombie a combatir, a veces se quedan dando vueltas al ir a una celda adyacente mientras el enemigo está haciendo lo mismo, entrando en un precioso bucle infinito a través de un baile de pixels
+
+- Eliminar la antigua logica de reserved_tiles y sustituirla por un componente específico de cada cosa con la que se va a interactuar. POr ejemplo, ahora funciona según la build_order, que tiene un atributo enum estado de la construccion. Gather se hace con la variable reserved : bool dentro de ResourceComponent
+
+- Mejorar el movimiento para hacerlo más smoth tipo rimworld. Que se vayan moviendo lentamente de una parte de la casilla a la otra. Suena a que aparecerán mil bugs
+
+- Feedback visual para el ataque, pensar sobre si hace falta attack_system con cada agregación (de momento es muy simple para eso)
+
+- 

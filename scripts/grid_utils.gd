@@ -4,6 +4,8 @@ const TILE_SIZE : int = 16
 
 const grid_offset : Vector2i = Vector2i(TILE_SIZE/2, TILE_SIZE/2)
 
+const INVALID := Vector2i(-1,-1)
+
 enum direction {
 	UP,
 	DOWN,
@@ -17,3 +19,8 @@ const DIR = [
 	Vector2i(1, 0),
 	Vector2i(-1, 0)
 ]
+
+static func is_adjacent(a: Vector2i, b: Vector2i) -> bool:
+	var dx = abs(a.x - b.x)
+	var dy = abs(a.y - b.y)
+	return max(dx, dy) == 1

@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://d0taproh1hhtm"]
+
+[ext_resource type="Texture2D" uid="uid://pfeuu67e4j0d" path="res://resources/human.png" id="1_swaxu"]
+[ext_resource type="Script" uid="uid://y7g7bjx7ejd7" path="res://scripts/human.gd" id="2_cwf78"]
+
+[node name="Human" type="Sprite2D" unique_id=1027604701]
+texture = ExtResource("1_swaxu")
+centered = false
+script = ExtResource("2_cwf78")
+
+[node name="ProgressBar" type="ProgressBar" parent="." unique_id=2023321212]
+visible = false
+offset_left = -8.0
+offset_top = -27.0
+offset_right = 24.0
