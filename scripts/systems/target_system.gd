@@ -34,7 +34,7 @@ func update(delta : float, entities :  Array[Entity]):
 					target_comp.needs_retarget = false
 
 			CityComponent.Tasks.ATTACK:
-				if target_comp.target == null and target_comp.target_pos == GridUtils.INVALID:
+				if target_comp.needs_retarget:
 					if !choose_attack_target(entity, entities, target_comp.target_type):
 						pass
 					else:
@@ -51,7 +51,7 @@ func find_wood(entity : Entity, entities :  Array[Entity]):
 		return false
 	target_comp.target = new_target
 	target_comp.target_pos = new_target.get_component(PositionComponent).grid_pos
-	new_target.get_component(ResourceComponent).reserved = true
+	new_target.get_component(ResourceComponent).state = ResourceComponent.States.RESERVED
 	print("HE reservado COGER LA MADERA EN: ", target_comp.target.get_component(PositionComponent).grid_pos)
 	
 	return true
@@ -88,7 +88,7 @@ func find_nearest(entity : Entity, entities :  Array[Entity], target_type : Enti
 		if posible_target.entity_type != target_type:
 			continue
 			
-		if target_type == Entity.Entity_type.RESOURCE and posible_target.get_component(ResourceComponent).reserved:
+		if target_type == Entity.Entity_type.RESOURCE and posible_target.get_component(ResourceComponent).state != ResourceComponent.States.FREE:
 			continue
 
 		var dist = abs(posible_target.get_component(PositionComponent).grid_pos.x - entity.get_component(PositionComponent).grid_pos.x) + abs(posible_target.get_component(PositionComponent).grid_pos.y - entity.get_component(PositionComponent).grid_pos.y)

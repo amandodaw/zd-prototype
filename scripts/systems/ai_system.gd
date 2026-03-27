@@ -40,7 +40,7 @@ func check_job(delta : float, entity : Entity, entities : Array[Entity]):
 			return
 
 		if city_comp.tasks[CityComponent.Tasks.GATHER_RESOURCES]:
-			if check_target(entities, Entity.Entity_type.RESOURCE):
+			if check_resource(entity, entities):
 				ai_comp.current_job = city_comp.Tasks.GATHER_RESOURCES
 				return
 
@@ -68,4 +68,16 @@ func check_target(entities : Array[Entity], target_type : Entity.Entity_type) ->
 	for posible_target in entities:
 		if posible_target.entity_type == target_type:
 			return true
+	return false
+
+func check_resource(entity : Entity, entities : Array[Entity]):
+	var target_comp : TargetComponent = entity.get_component(TargetComponent)
+	
+	if target_comp.target != null and target_comp.target.entity_type == Entity.Entity_type.RESOURCE and target_comp.target.get_component(ResourceComponent).state == ResourceComponent.States.RESERVED:
+		return true
+	
+	for posible_target in entities:
+		if posible_target.entity_type == Entity.Entity_type.RESOURCE:
+			if posible_target.get_component(ResourceComponent).state == ResourceComponent.States.FREE:
+				return true
 	return false

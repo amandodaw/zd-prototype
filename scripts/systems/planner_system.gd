@@ -7,7 +7,6 @@ func update(delta : float, entities :  Array[Entity]):
 		var ai_comp : AIComponent = entity.get_component(AIComponent)
 		var city_comp : CityComponent = ai_comp.city_comp
 		var pos : PositionComponent = entity.get_component(PositionComponent)
-		var target_comp : TargetComponent = entity.get_component(TargetComponent)
 		var plan_comp : PlanComponent = entity.get_component(PlanComponent)
 		
 		var new_plan : Array[Action] = []
@@ -47,9 +46,12 @@ func set_new_plan(entity, new_plan):
 
 	var plan_comp : PlanComponent = entity.get_component(PlanComponent)
 	var path_comp : PathComponent = entity.get_component(PathComponent)
+	var target_comp : TargetComponent = entity.get_component(TargetComponent)
 
 	if plan_comp.current_action != null:
 		plan_comp.current_action.on_cancel(entity)
+		#En principio solo hace falta resetear el target si ha cancelado una accion, porque si no trae ya el bueno
+		target_comp.needs_retarget = true
 
 	plan_comp.plan = new_plan
 	plan_comp.current_action = null
