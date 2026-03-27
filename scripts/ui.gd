@@ -10,6 +10,7 @@ extends Control
 @onready var attack_button : Button = $BottomPanel/Orders/VBoxContainer/AttackButton
 
 var city_comp : CityComponent
+var entities : Array[Entity]
 
 var elements_map : TileMapLayer
 
@@ -87,12 +88,16 @@ func place_build_order(base_cell : Vector2i, order_type : String) -> void:
 				data = load("res://scripts/data/workplace_data.tres") as BuildingData
 			"wall_order":
 				data = load("res://scripts/data/wall_data.tres") as BuildingData
+		var building := Entity.new()
 		var build_order : BuildOrderComponent = create_task_from_data(data)
+		building.add_component(build_order)
+		building.entity_type = Entity.Entity_type.BUILDING
 		for offset in build_order.form:
 			var target_cell = offset + base_cell
 			elements_map.set_cell(target_cell, 0, placed_building)
 			city_comp.astar.set_point_solid(target_cell, true)
 		city_comp.build_orders.set(base_cell, build_order)
+		entities.append(building)
 	else:
 		print("ubicacion no valida")
 

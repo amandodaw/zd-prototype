@@ -43,6 +43,7 @@ func _ready() -> void:
 	map.add_wood_random(30)
 
 	ui.city_comp = city_comp
+	ui.entities = entities
 	ui.elements_map = elements_map
 	for i in range(2+1):
 		

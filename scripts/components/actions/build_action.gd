@@ -32,8 +32,8 @@ func execute(entity: Entity, delta: float):
 			return
 		build_order.progress += delta
 		return
-	#Si no se encuentra en el lugar, cancelar y reconstonstruir plan en ai?
-	#Se debería hacer automático con finish_build... 
+	else:
+		cancel_build(entity, build_order)
 
 func place_building(entity : Entity, build_order : BuildOrderComponent) -> void:
 	var city_comp = entity.get_component(AIComponent).city_comp
@@ -48,8 +48,9 @@ func place_building(entity : Entity, build_order : BuildOrderComponent) -> void:
 			city_comp.astar.set_point_solid(target_cell, false)
 
 func stop_building(entity: Entity):
-	entity.get_component(AIComponent).current_job = CityComponent.Tasks.IDLE
-	entity.get_component(TargetComponent).target_pos = GridUtils.INVALID
+	var target_comp : TargetComponent = entity.get_component(TargetComponent)
+	
+	#target_comp.needs_retarget = true
 	finished = true
 	entity.build_bar.visible = false
 

@@ -17,9 +17,9 @@ func check_job(delta : float, entity : Entity, entities : Array[Entity]):
 	var city_comp : CityComponent = ai_comp.city_comp
 	if  ai_comp.check_job_count >= ai_comp.check_job_timer:
 		ai_comp.check_job_count = 0
-		
-		if ai_comp.current_job != city_comp.Tasks.IDLE and city_comp.tasks[ai_comp.current_job]:
-			return
+
+		#if ai_comp.current_job != city_comp.Tasks.IDLE and city_comp.tasks[ai_comp.current_job]:
+			#return
 
 		if city_comp.tasks[CityComponent.Tasks.ATTACK]:
 			if check_target(entities, Entity.Entity_type.ZOMBIE):

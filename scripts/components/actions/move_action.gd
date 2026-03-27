@@ -20,7 +20,6 @@ func follow_path(entity : Entity, delta : float) -> void:
 
 	if path_comp.path.is_empty():
 		if !GridUtils.is_adjacent(target_comp.target_pos, pos_comp.grid_pos):
-			print("ya no tengo path...")
 			plan_comp.plan.clear()
 			plan_comp.needs_replan = true
 			plan_comp.current_action = null
@@ -61,12 +60,12 @@ func on_cancel(entity : Entity) -> void:
 	var target_comp : TargetComponent = entity.get_component(TargetComponent)
 	
 	path_comp.path.clear()
-	target_comp.target_pos = GridUtils.INVALID
+	target_comp.needs_retarget = true
 
 func on_finished(entity : Entity) -> void:
 	var target_comp : TargetComponent = entity.get_component(TargetComponent)
 	var plan_comp : PlanComponent = entity.get_component(PlanComponent)
-	print("terminé de moverme")
-	print("Soy: ", entity)
-	print("Mi posición: ", entity.get_component(PositionComponent).grid_pos)
-	print("TAmao plan: ", plan_comp.plan.size())
+	#print("terminé de moverme")
+	#print("Soy: ", entity)
+	#print("Mi posición: ", entity.get_component(PositionComponent).grid_pos)
+	#print("TAmao plan: ", plan_comp.plan.size())

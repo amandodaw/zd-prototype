@@ -24,10 +24,8 @@ func execute(entity : Entity, delta : float):
 		return
 
 func stop_picking(entity : Entity):
-	var target_comp : TargetComponent = entity.get_component(TargetComponent)
-	var ai_comp : AIComponent = entity.get_component(AIComponent)
-	ai_comp.current_job = CityComponent.Tasks.IDLE
-	target_comp.target_pos = GridUtils.INVALID
+	#var target_comp : TargetComponent = entity.get_component(TargetComponent)
+	#target_comp.needs_retarget = true
 	finished = true
 
 func cancel_picking(entity : Entity):

@@ -25,5 +25,4 @@ func update(delta : float, entities: Array[Entity]):
 			plan_comp.current_action = null
 			if plan_comp.plan.is_empty():
 				print("plan terminado")
-				target_comp.target_pos = GridUtils.INVALID
-				target_comp.target = null
+				target_comp.needs_retarget = true
