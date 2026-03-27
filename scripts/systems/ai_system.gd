@@ -14,6 +14,7 @@ func update(delta : float, entities :  Array[Entity]):
 
 func check_job(delta : float, entity : Entity, entities : Array[Entity]):
 	var ai_comp : AIComponent = entity.get_component(AIComponent)
+	var target_comp : TargetComponent = entity.get_component(TargetComponent)
 	var city_comp : CityComponent = ai_comp.city_comp
 	if  ai_comp.check_job_count >= ai_comp.check_job_timer:
 		ai_comp.check_job_count = 0
@@ -24,6 +25,7 @@ func check_job(delta : float, entity : Entity, entities : Array[Entity]):
 		if city_comp.tasks[CityComponent.Tasks.ATTACK]:
 			if check_target(entities, Entity.Entity_type.ZOMBIE):
 				ai_comp.current_job = city_comp.Tasks.ATTACK
+				target_comp.target_type = Entity.Entity_type.ZOMBIE
 				return
 
 		if city_comp.tasks[city_comp.Tasks.BUILD] and !city_comp.build_orders.is_empty():
