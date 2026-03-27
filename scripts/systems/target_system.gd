@@ -35,10 +35,9 @@ func update(delta : float, entities :  Array[Entity]):
 
 			CityComponent.Tasks.ATTACK:
 				if target_comp.needs_retarget:
-					if !choose_attack_target(entity, entities, target_comp.target_type):
-						pass
-					else:
+					if choose_attack_target(entity, entities, target_comp.target_type):
 						plan_comp.needs_replan = true
+						target_comp.needs_retarget = false
 
 
 

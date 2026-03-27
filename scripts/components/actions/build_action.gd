@@ -48,9 +48,6 @@ func place_building(entity : Entity, build_order : BuildOrderComponent) -> void:
 			city_comp.astar.set_point_solid(target_cell, false)
 
 func stop_building(entity: Entity):
-	var target_comp : TargetComponent = entity.get_component(TargetComponent)
-	
-	#target_comp.needs_retarget = true
 	finished = true
 	entity.build_bar.visible = false
 

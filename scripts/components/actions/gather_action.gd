@@ -31,7 +31,6 @@ func stop_picking(entity : Entity):
 
 func cancel_picking(entity : Entity):
 	var target_comp : TargetComponent = entity.get_component(TargetComponent)
-	var city_comp : CityComponent = entity.get_component(AIComponent).city_comp
 	var plan_comp : PlanComponent = entity.get_component(PlanComponent)
 	plan_comp.plan.clear()
 	target_comp.target.get_component(ResourceComponent).state = ResourceComponent.States.FREE
