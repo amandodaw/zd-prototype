@@ -299,15 +299,13 @@ Se ha realizado la primera prueba con HealthComponent, quitando funcionalides qu
 - AttackComponent, que contiene todas las variables de ataque (y los métodos hasta que se migre a un sistema AttackSystem)
 - Cada vez que se cree un componente y se ajusten sus métodos, agregarlo a las entidades y testear que el juego sigue funcionando (en world, funciones spawn_)
 
-
-
 # Recuento 24/03/26 - Tareas
 
 - Recrear acción make pensando en los items que se crean como entidades objeto, por ejemplo
 
 - Cuando un humano va hacia un zombie a combatir, a veces se quedan dando vueltas al ir a una celda adyacente mientras el enemigo está haciendo lo mismo, entrando en un precioso bucle infinito a través de un baile de pixels
 
-- Eliminar la antigua logica de reserved_tiles y sustituirla por un componente específico de cada cosa con la que se va a interactuar. POr ejemplo, ahora funciona según la build_order, que tiene un atributo enum estado de la construccion. Gather se hace con la variable reserved : bool dentro de ResourceComponent
+- ~~Eliminar la antigua logica de reserved_tiles y sustituirla por un componente específico de cada cosa con la que se va a interactuar. POr ejemplo, ahora funciona según la build_order, que tiene un atributo enum estado de la construccion. Gather se hace con la variable reserved : bool dentro de ResourceComponent~~ HECHO
 
 - Mejorar el movimiento para hacerlo más smoth tipo rimworld. Que se vayan moviendo lentamente de una parte de la casilla a la otra. Suena a que aparecerán mil bugs
 

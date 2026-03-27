@@ -22,15 +22,17 @@ func execute(entity : Entity, delta : float):
 
 func stop_picking(entity : Entity):
 	var plan_comp : PlanComponent = entity.get_component(PlanComponent)
+	var target_comp : TargetComponent = entity.get_component(TargetComponent)
 	
 	plan_comp.needs_replan = true
 	finished = true
 
 func cancel_picking(entity : Entity):
 	var target_comp : TargetComponent = entity.get_component(TargetComponent)
-
+	
 	target_comp.target.get_component(ResourceComponent).reserved = false
 	print("HE CANCELADO COGER LA MADERA EN: ", target_comp.target.get_component(PositionComponent).grid_pos)
+	target_comp.target = null
 	stop_picking(entity)
 
 func on_cancel(entity : Entity) -> void:

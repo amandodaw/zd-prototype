@@ -5,6 +5,7 @@ func update(delta : float, entities: Array[Entity]):
 		if !e.has_component(PlanComponent):
 			continue
 		var plan_comp : PlanComponent = e.get_component(PlanComponent)
+		var target_comp : TargetComponent = e.get_component(TargetComponent)
 		if not plan_comp:
 			continue
 
@@ -16,7 +17,7 @@ func update(delta : float, entities: Array[Entity]):
 			plan_comp.current_action = plan_comp.plan.pop_front()
 
 		var action = plan_comp.current_action
-
+ 
 		action.execute(e, delta)
 
 		if action.is_finished():
@@ -24,3 +25,5 @@ func update(delta : float, entities: Array[Entity]):
 			plan_comp.current_action = null
 			if plan_comp.plan.is_empty():
 				print("plan terminado")
+				plan_comp.needs_replan = true
+				target_comp.target = null

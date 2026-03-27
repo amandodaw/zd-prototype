@@ -59,6 +59,7 @@ func move_to_path_point(entity : Entity):
 
 	#Si la celda está ocupada por otra entidad, esperar a que se libere
 	if ai_comp.city_comp.living_entities.has(next_pos):
+		fail(entity)
 		return
 
 	ai_comp.city_comp.living_entities.erase(pos_comp.grid_pos)

@@ -28,9 +28,9 @@ func update(delta : float, entities :  Array[Entity]):
 				pass
 
 			CityComponent.Tasks.GATHER_RESOURCES:
-				if target_comp.target == null and target_comp.target_pos == GridUtils.INVALID:
+				if target_comp.target == null:
+					print("VAMOS A GATHER")
 					find_wood(entity, entities)
-
 
 			CityComponent.Tasks.IDLE:
 				if target_comp.target_pos == GridUtils.INVALID:

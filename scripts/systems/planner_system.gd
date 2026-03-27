@@ -5,9 +5,6 @@ func update(delta : float, entities :  Array[Entity]):
 		if !entity.has_component(PlanComponent):
 			continue
 		var ai_comp : AIComponent = entity.get_component(AIComponent)
-		var city_comp : CityComponent = ai_comp.city_comp
-		var pos : PositionComponent = entity.get_component(PositionComponent)
-		var target_comp : TargetComponent = entity.get_component(TargetComponent)
 		var plan_comp : PlanComponent = entity.get_component(PlanComponent)
 		
 		var new_plan : Array[Action] = []
