@@ -14,7 +14,7 @@ func execute(entity : Entity, delta : float):
 		cancel_picking(entity)
 		return
 
-	if GridUtils.is_adjacent(position_comp.grid_pos, target_comp.target_pos):
+	if target_comp.target != null and GridUtils.is_adjacent(position_comp.grid_pos, target_comp.target_pos):
 		entity.elements_map.erase_cell(target_comp.target_pos)
 		city_comp.entities.erase(target_comp.target_pos)
 		city_comp.astar.set_point_solid(target_comp.target_pos, false)

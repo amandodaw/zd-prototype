@@ -24,5 +24,6 @@ var build_orders : Dictionary[Vector2i, BuildOrderComponent] = {}
 var make_orders : Array[String] = []
 var entities : Dictionary = {}
 var living_entities : Dictionary[Vector2i, Entity] = {}
+var reserved_tiles : Dictionary[Vector2i, Entity] = {}
 
 var astar : AStarGrid2D
