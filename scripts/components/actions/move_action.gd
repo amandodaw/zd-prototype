@@ -18,6 +18,10 @@ func follow_path(entity : Entity, delta : float) -> void:
 		plan_comp.needs_replan = true
 		return
 
+	if target_comp.target and target_comp.target.get_component(PositionComponent).grid_pos != target_comp.target_pos:
+		path_comp.needs_repath = true
+		return
+
 	if path_comp.path.is_empty():
 		if !GridUtils.is_adjacent(target_comp.target_pos, pos_comp.grid_pos):
 			plan_comp.plan.clear()

@@ -33,6 +33,8 @@ func cancel_picking(entity : Entity):
 	var target_comp : TargetComponent = entity.get_component(TargetComponent)
 	var plan_comp : PlanComponent = entity.get_component(PlanComponent)
 	plan_comp.plan.clear()
+	if target_comp.target==null:
+		return
 	target_comp.target.get_component(ResourceComponent).state = ResourceComponent.States.FREE
 	print("HE CANCELADO COGER LA MADERA EN: ", target_comp.target.get_component(PositionComponent).grid_pos)
 	stop_picking(entity)

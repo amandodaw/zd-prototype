@@ -39,6 +39,17 @@ func update(delta : float, entities :  Array[Entity]):
 						plan_comp.needs_replan = true
 						target_comp.needs_retarget = false
 
+		if target_comp.target != null:
+			var pos_comp = target_comp.target.get_component(PositionComponent)
+			var new_pos = pos_comp.grid_pos
+			
+			if new_pos != target_comp.target_pos:
+				target_comp.target_pos = new_pos
+				
+				path_comp.repath_timer += delta
+				if path_comp.repath_timer >= path_comp.repath_interval:
+					path_comp.needs_repath = true
+					path_comp.repath_timer = 0.0
 
 
 func find_wood(entity : Entity, entities :  Array[Entity]):
